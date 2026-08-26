@@ -17,6 +17,7 @@
   --header-height: 72px;
   --radius-control: 12px;
   --radius-image: 16px;
-  --radius-card: 20px;
+  --radius-card: 16px;
+  --radius-panel: 20px;
   --radius-pill: 200px;
 }
