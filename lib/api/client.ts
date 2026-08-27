@@ -15,19 +15,28 @@ export async function apiFetch<T>(
   options?: RequestInit,
 ): Promise<T> {
   const response = await fetch(`${API_BASE_URL}${path}`, options);
-  const data: unknown = await response.json();
 
   if (!response.ok) {
-    const message =
-      typeof data === "object" &&
-      data !== null &&
-      "message" in data &&
-      typeof data.message === "string"
-        ? data.message
-        : `Request failed with status ${response.status}`;
+    const fallbackMessage = `Request failed with status ${response.status}`;
+    const body = await response.text();
+    let message = fallbackMessage;
+
+    try {
+      const data: unknown = JSON.parse(body);
+      if (
+        typeof data === "object" &&
+        data !== null &&
+        "message" in data &&
+        typeof data.message === "string"
+      ) {
+        message = data.message;
+      }
+    } catch {
+      // Error responses are allowed to have an empty or non-JSON body.
+    }
 
     throw new ApiError(message, response.status);
   }
 
-  return data as T;
+  return response.json() as Promise<T>;
 }
