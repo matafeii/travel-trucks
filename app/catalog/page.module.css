@@ -1,0 +1,4 @@
+.main {
+  min-height: calc(100svh - var(--header-height));
+  padding-block: 48px 64px;
+}

@@ -43,6 +43,7 @@ export const campersResponse: CamperListResponse = {
       price: camperDetails.price,
       rating: camperDetails.rating,
       location: camperDetails.location,
+      description: camperDetails.description,
       form: camperDetails.form,
       length: camperDetails.length,
       width: camperDetails.width,

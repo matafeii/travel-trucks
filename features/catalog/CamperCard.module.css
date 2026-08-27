@@ -1,0 +1,146 @@
+.card {
+  display: flex;
+  width: 888px;
+  height: 312px;
+  gap: 24px;
+  padding: 24px;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  background: var(--color-white);
+}
+
+.cover {
+  position: relative;
+  width: 219px;
+  height: 240px;
+  flex: 0 0 219px;
+  overflow: hidden;
+  border-radius: var(--radius-image);
+}
+
+.cover img {
+  object-fit: cover;
+}
+
+.content {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.details {
+  display: flex;
+  min-width: 0;
+  width: 100%;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.headingRow {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.headingRow h2,
+.price {
+  margin: 0;
+  color: var(--color-text);
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 32px;
+}
+
+.headingRow h2 {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.price {
+  flex: 0 0 auto;
+}
+
+.meta {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 16px;
+  color: var(--color-text);
+  font-size: 16px;
+  line-height: 24px;
+}
+
+.meta span {
+  display: inline-flex;
+  min-width: 0;
+  align-items: center;
+  gap: 4px;
+}
+
+.meta img {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 16px;
+}
+
+.rating {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.description {
+  max-width: 100%;
+  margin: 0;
+  overflow: hidden;
+  color: var(--color-text-muted);
+  font-size: 16px;
+  line-height: 24px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.features {
+  display: flex;
+  max-height: 40px;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 0;
+  margin: 8px 0 0;
+  overflow: hidden;
+  list-style: none;
+}
+
+.features li {
+  display: inline-flex;
+  min-height: 40px;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 18px;
+  border-radius: var(--radius-pill);
+  background: var(--color-badges);
+  color: var(--color-text);
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 24px;
+}
+
+.features img {
+  width: 20px;
+  height: 20px;
+  flex: 0 0 20px;
+}
+
+.moreLink {
+  width: 166px;
+  min-height: 56px;
+  padding-inline: 0;
+  text-decoration: none;
+}

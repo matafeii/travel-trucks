@@ -1,0 +1,82 @@
+'use client';
+
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useInfiniteQuery } from '@tanstack/react-query';
+import { Button } from '@/components/Button/Button';
+import { Loader } from '@/components/Loader/Loader';
+import { getCampers } from '@/lib/api/campers';
+import type { CatalogFilters as CatalogFilterValues } from '@/types/camper';
+import { CamperList } from './CamperList';
+import { CatalogFilters } from './CatalogFilters';
+import { readFilters, writeFilters } from './url-filters';
+import styles from './CatalogClient.module.css';
+
+interface CatalogClientProps {
+  initialFilters: CatalogFilterValues;
+}
+
+function normalizeFilters(filters: CatalogFilterValues): CatalogFilterValues {
+  return readFilters(writeFilters(filters));
+}
+
+export function CatalogClient({ initialFilters }: CatalogClientProps) {
+  const router = useRouter();
+  const [filters, setFilters] = useState(() => normalizeFilters(initialFilters));
+  const query = useInfiniteQuery({
+    queryKey: ['campers', filters],
+    queryFn: ({ pageParam, signal }) => getCampers(filters, pageParam, signal),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage) =>
+      lastPage.page < lastPage.totalPages ? lastPage.page + 1 : undefined,
+  });
+
+  const campers = query.data?.pages.flatMap((page) => page.campers) ?? [];
+
+  function applyFilters(nextFilters: CatalogFilterValues) {
+    const normalizedFilters = normalizeFilters(nextFilters);
+    const params = writeFilters(normalizedFilters);
+
+    setFilters(normalizedFilters);
+    router.replace(params.size ? `/catalog?${params.toString()}` : '/catalog');
+  }
+
+  return (
+    <div className={styles.layout}>
+      <CatalogFilters initialFilters={filters} onApply={applyFilters} />
+
+      <section aria-labelledby="catalog-title" className={styles.results}>
+        <h1 className={styles.srOnly} id="catalog-title">
+          Camper catalog
+        </h1>
+
+        {query.isPending ? <Loader /> : null}
+        {query.isError ? (
+          <p className={styles.message} role="alert">
+            {query.error.message || 'Unable to load campers.'}
+          </p>
+        ) : null}
+        {query.isSuccess && campers.length === 0 ? (
+          <p className={styles.message}>No campers found.</p>
+        ) : null}
+        {campers.length > 0 ? <CamperList campers={campers} /> : null}
+
+        {query.hasNextPage ? (
+          <div className={styles.loadMore}>
+            <Button
+              disabled={query.isFetchingNextPage}
+              type="button"
+              variant="secondary"
+              onClick={() => query.fetchNextPage()}
+            >
+              Load More
+            </Button>
+            {query.isFetchingNextPage ? (
+              <Loader compact label="Loading more campers" />
+            ) : null}
+          </div>
+        ) : null}
+      </section>
+    </div>
+  );
+}
