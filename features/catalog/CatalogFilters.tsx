@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import { useEffect } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { Button } from '@/components/Button/Button';
@@ -43,10 +44,15 @@ export function CatalogFilters({
   initialFilters,
   onApply,
 }: CatalogFiltersProps) {
+  const { location, form, engine, transmission } = initialFilters;
   const { handleSubmit, register, reset } = useForm<CatalogFilterValues>({
     defaultValues: initialFilters,
     resolver: zodResolver(catalogFiltersSchema),
   });
+
+  useEffect(() => {
+    reset({ location, form, engine, transmission });
+  }, [engine, form, location, reset, transmission]);
 
   return (
     <form

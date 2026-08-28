@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { Button } from '@/components/Button/Button';
@@ -22,9 +22,12 @@ function normalizeFilters(filters: CatalogFilterValues): CatalogFilterValues {
 
 export function CatalogClient({ initialFilters }: CatalogClientProps) {
   const router = useRouter();
+  const initialFilterKey = writeFilters(initialFilters).toString();
+  const previousInitialFilterKey = useRef(initialFilterKey);
   const [filters, setFilters] = useState(() => normalizeFilters(initialFilters));
+  const [searchRevision, setSearchRevision] = useState(0);
   const query = useInfiniteQuery({
-    queryKey: ['campers', filters],
+    queryKey: ['campers', filters, searchRevision],
     queryFn: ({ pageParam, signal }) => getCampers(filters, pageParam, signal),
     initialPageParam: 1,
     getNextPageParam: (lastPage) =>
@@ -33,11 +36,21 @@ export function CatalogClient({ initialFilters }: CatalogClientProps) {
 
   const campers = query.data?.pages.flatMap((page) => page.campers) ?? [];
 
+  useEffect(() => {
+    if (previousInitialFilterKey.current === initialFilterKey) return;
+
+    previousInitialFilterKey.current = initialFilterKey;
+    setFilters(readFilters(new URLSearchParams(initialFilterKey)));
+    setSearchRevision((revision) => revision + 1);
+  }, [initialFilterKey]);
+
   function applyFilters(nextFilters: CatalogFilterValues) {
     const normalizedFilters = normalizeFilters(nextFilters);
     const params = writeFilters(normalizedFilters);
 
+    previousInitialFilterKey.current = params.toString();
     setFilters(normalizedFilters);
+    setSearchRevision((revision) => revision + 1);
     router.replace(params.size ? `/catalog?${params.toString()}` : '/catalog');
   }
 
@@ -51,17 +64,43 @@ export function CatalogClient({ initialFilters }: CatalogClientProps) {
         </h1>
 
         {query.isPending ? <Loader /> : null}
-        {query.isError ? (
-          <p className={styles.message} role="alert">
-            {query.error.message || 'Unable to load campers.'}
-          </p>
+        {query.isError && campers.length === 0 ? (
+          <div className={styles.errorState}>
+            <p className={styles.errorMessage} role="alert">
+              {query.error.message || 'Unable to load campers.'}
+            </p>
+            <Button
+              disabled={query.isRefetching}
+              type="button"
+              variant="secondary"
+              onClick={() => query.refetch()}
+            >
+              Try again
+            </Button>
+          </div>
         ) : null}
         {query.isSuccess && campers.length === 0 ? (
           <p className={styles.message}>No campers found.</p>
         ) : null}
         {campers.length > 0 ? <CamperList campers={campers} /> : null}
 
-        {query.hasNextPage ? (
+        {query.isFetchNextPageError && campers.length > 0 ? (
+          <div className={`${styles.errorState} ${styles.nextPageError}`}>
+            <p className={styles.errorMessage} role="alert">
+              Unable to load more campers. {query.error.message}
+            </p>
+            <Button
+              disabled={query.isFetchingNextPage}
+              type="button"
+              variant="secondary"
+              onClick={() => query.fetchNextPage()}
+            >
+              Try again
+            </Button>
+          </div>
+        ) : null}
+
+        {query.hasNextPage && !query.isFetchNextPageError ? (
           <div className={styles.loadMore}>
             <Button
               disabled={query.isFetchingNextPage}

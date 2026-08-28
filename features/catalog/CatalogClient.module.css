@@ -37,8 +37,26 @@
   text-align: center;
 }
 
-.message[role='alert'] {
+.errorState {
+  display: flex;
+  min-height: 240px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
+.errorMessage {
+  margin: 0;
   color: var(--color-error);
+  font-size: 16px;
+  line-height: 24px;
+  text-align: center;
+}
+
+.nextPageError {
+  min-height: auto;
+  margin-top: 24px;
 }
 
 .loadMore {

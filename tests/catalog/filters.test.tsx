@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { CatalogFilters } from '@/features/catalog/CatalogFilters';
 import type { CatalogFilters as CatalogFilterValues } from '@/types/camper';
@@ -71,6 +71,36 @@ it('clears the form without applying filters', async () => {
   expect(screen.getByLabelText('Location')).toHaveValue('');
   expect(screen.getByRole('radio', { name: 'Alcove' })).not.toBeChecked();
   expect(screen.getByRole('radio', { name: 'Petrol' })).not.toBeChecked();
+  expect(screen.getByRole('radio', { name: 'Automatic' })).not.toBeChecked();
+  expect(onApply).not.toHaveBeenCalled();
+});
+
+it('resets every control when URL-derived initial filters change', async () => {
+  const onApply = vi.fn();
+  const { rerender } = render(
+    <CatalogFilters
+      initialFilters={{
+        location: 'Kyiv',
+        form: 'alcove',
+        engine: 'diesel',
+        transmission: 'automatic',
+      }}
+      onApply={onApply}
+    />,
+  );
+
+  expect(screen.getByLabelText('Location')).toHaveValue('Kyiv');
+  expect(screen.getByRole('radio', { name: 'Alcove' })).toBeChecked();
+  expect(screen.getByRole('radio', { name: 'Diesel' })).toBeChecked();
+  expect(screen.getByRole('radio', { name: 'Automatic' })).toBeChecked();
+
+  rerender(
+    <CatalogFilters initialFilters={emptyFilters} onApply={onApply} />,
+  );
+
+  await waitFor(() => expect(screen.getByLabelText('Location')).toHaveValue(''));
+  expect(screen.getByRole('radio', { name: 'Alcove' })).not.toBeChecked();
+  expect(screen.getByRole('radio', { name: 'Diesel' })).not.toBeChecked();
   expect(screen.getByRole('radio', { name: 'Automatic' })).not.toBeChecked();
   expect(onApply).not.toHaveBeenCalled();
 });
