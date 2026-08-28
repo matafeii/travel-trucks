@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { BookingForm } from '@/features/booking/BookingForm';
@@ -20,6 +22,15 @@ beforeEach(() => {
   createBookingRequestMock.mockReset();
   successMock.mockReset();
   errorMock.mockReset();
+});
+
+it('keeps the exact 44px Figma panel padding', () => {
+  const css = readFileSync(
+    resolve(process.cwd(), 'features/booking/BookingForm.module.css'),
+    'utf8',
+  );
+
+  expect(css).toMatch(/\.panel\s*{[\s\S]*?padding:\s*44px;/);
 });
 
 it('shows required errors and does not submit an empty form', async () => {
@@ -94,6 +105,8 @@ it('disables the controls and shows a pending label while submitting', async () 
   ).toBeDisabled();
   expect(screen.getByLabelText('Name')).toBeDisabled();
   expect(screen.getByLabelText('Email')).toBeDisabled();
+  await user.click(screen.getByRole('button', { name: 'Sending…' }));
+  expect(createBookingRequestMock).toHaveBeenCalledTimes(1);
 
   resolveRequest({ message: 'Booking created' });
   await screen.findByRole('button', { name: 'Send' });
