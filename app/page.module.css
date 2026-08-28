@@ -11,11 +11,11 @@
   position: absolute;
   inset: 0;
   z-index: -1;
-  content: '';
+  content: "";
 }
 
 .hero::before {
-  background-image: url('/images/home-hero.jpeg');
+  background-image: url("/images/home-hero.jpeg");
   background-position: center 75%;
   background-size: cover;
   transform: scaleX(-1);

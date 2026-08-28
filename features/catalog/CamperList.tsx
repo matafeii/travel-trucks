@@ -1,6 +1,6 @@
-import type { CamperListItem } from '@/types/camper';
-import { CamperCard } from './CamperCard';
-import styles from './CamperList.module.css';
+import type { CamperListItem } from "@/types/camper";
+import { CamperCard } from "./CamperCard";
+import styles from "./CamperList.module.css";
 
 interface CamperListProps {
   campers: CamperListItem[];

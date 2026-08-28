@@ -50,9 +50,8 @@ describe("campers API", () => {
 
   it("uses the backend message for JSON booking failures", async () => {
     server.use(
-      http.post(
-        `${API_BASE_URL}/campers/:camperId/booking-requests`,
-        () => HttpResponse.json({ message: "Email is invalid" }, { status: 422 }),
+      http.post(`${API_BASE_URL}/campers/:camperId/booking-requests`, () =>
+        HttpResponse.json({ message: "Email is invalid" }, { status: 422 }),
       ),
     );
 

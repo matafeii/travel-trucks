@@ -1,7 +1,7 @@
-import Image from 'next/image';
-import { BookingForm } from '@/features/booking/BookingForm';
-import { CamperGallery } from '@/features/camper-details/CamperGallery';
-import { ReviewsList } from '@/features/camper-details/ReviewsList';
+import Image from "next/image";
+import { BookingForm } from "@/features/booking/BookingForm";
+import { CamperGallery } from "@/features/camper-details/CamperGallery";
+import { ReviewsList } from "@/features/camper-details/ReviewsList";
 import type {
   Amenity,
   CamperDetails,
@@ -9,8 +9,8 @@ import type {
   Engine,
   Transmission,
   Review,
-} from '@/types/camper';
-import styles from './CamperOverview.module.css';
+} from "@/types/camper";
+import styles from "./CamperOverview.module.css";
 
 interface CamperOverviewProps {
   camper: CamperDetails;
@@ -20,34 +20,34 @@ interface CamperOverviewProps {
 type FeatureValue = Amenity | CamperForm | Engine | Transmission;
 
 const featureLabels: Record<FeatureValue, string> = {
-  ac: 'AC',
-  bathroom: 'Bathroom',
-  kitchen: 'Kitchen',
-  tv: 'TV',
-  radio: 'Radio',
-  refrigerator: 'Refrigerator',
-  microwave: 'Microwave',
-  gas: 'Gas',
-  water: 'Water',
-  alcove: 'Alcove',
-  panel_van: 'Panel truck',
-  integrated: 'Fully integrated',
-  semi_integrated: 'Semi-integrated',
-  diesel: 'Diesel',
-  petrol: 'Petrol',
-  hybrid: 'Hybrid',
-  electric: 'Electric',
-  automatic: 'Automatic',
-  manual: 'Manual',
+  ac: "AC",
+  bathroom: "Bathroom",
+  kitchen: "Kitchen",
+  tv: "TV",
+  radio: "Radio",
+  refrigerator: "Refrigerator",
+  microwave: "Microwave",
+  gas: "Gas",
+  water: "Water",
+  alcove: "Alcove",
+  panel_van: "Panel truck",
+  integrated: "Fully integrated",
+  semi_integrated: "Semi-integrated",
+  diesel: "Diesel",
+  petrol: "Petrol",
+  hybrid: "Hybrid",
+  electric: "Electric",
+  automatic: "Automatic",
+  manual: "Manual",
 };
 
 function featureValues(camper: CamperDetails): FeatureValue[] {
-  const hasAirConditioning = camper.amenities.includes('ac');
-  const otherAmenities = camper.amenities.filter((amenity) => amenity !== 'ac');
+  const hasAirConditioning = camper.amenities.includes("ac");
+  const otherAmenities = camper.amenities.filter((amenity) => amenity !== "ac");
 
   return [
     camper.transmission,
-    ...(hasAirConditioning ? (['ac'] as const) : []),
+    ...(hasAirConditioning ? (["ac"] as const) : []),
     camper.engine,
     ...otherAmenities,
     camper.form,
@@ -55,14 +55,14 @@ function featureValues(camper: CamperDetails): FeatureValue[] {
 }
 
 export function CamperOverview({ camper, reviews = [] }: CamperOverviewProps) {
-  const reviewLabel = camper.totalReviews === 1 ? 'Review' : 'Reviews';
+  const reviewLabel = camper.totalReviews === 1 ? "Review" : "Reviews";
   const details = [
-    ['Form', featureLabels[camper.form]],
-    ['Length', camper.length],
-    ['Width', camper.width],
-    ['Height', camper.height],
-    ['Tank', camper.tank],
-    ['Consumption', camper.consumption],
+    ["Form", featureLabels[camper.form]],
+    ["Length", camper.length],
+    ["Width", camper.width],
+    ["Height", camper.height],
+    ["Tank", camper.tank],
+    ["Consumption", camper.consumption],
   ];
 
   return (
@@ -116,12 +116,7 @@ export function CamperOverview({ camper, reviews = [] }: CamperOverviewProps) {
           </div>
 
           <span className={styles.divider} aria-hidden>
-            <Image
-              src="/icons/divider.svg"
-              alt=""
-              fill
-              sizes="650px"
-            />
+            <Image src="/icons/divider.svg" alt="" fill sizes="650px" />
           </span>
 
           <dl className={styles.specifications}>

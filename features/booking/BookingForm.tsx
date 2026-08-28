@@ -1,24 +1,24 @@
-'use client';
+"use client";
 
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { toast } from 'sonner';
-import { Button } from '@/components/Button/Button';
-import { createBookingRequest } from '@/lib/api/campers';
-import { bookingSchema, type BookingFormValues } from './booking-schema';
-import styles from './BookingForm.module.css';
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { Button } from "@/components/Button/Button";
+import { createBookingRequest } from "@/lib/api/campers";
+import { bookingSchema, type BookingFormValues } from "./booking-schema";
+import styles from "./BookingForm.module.css";
 
 interface BookingFormProps {
   camperId: string;
 }
 
-const successMessage = 'Booking successful';
-const errorMessage = 'Booking failed. Please try again.';
+const successMessage = "Booking successful";
+const errorMessage = "Booking failed. Please try again.";
 
 export function BookingForm({ camperId }: BookingFormProps) {
   const [notification, setNotification] = useState<{
-    kind: 'success' | 'error';
+    kind: "success" | "error";
     message: string;
   } | null>(null);
   const {
@@ -28,7 +28,7 @@ export function BookingForm({ camperId }: BookingFormProps) {
     formState: { errors, isSubmitting },
   } = useForm<BookingFormValues>({
     resolver: zodResolver(bookingSchema),
-    defaultValues: { name: '', email: '' },
+    defaultValues: { name: "", email: "" },
   });
 
   async function submit(values: BookingFormValues) {
@@ -40,10 +40,10 @@ export function BookingForm({ camperId }: BookingFormProps) {
         email: values.email,
       });
       reset();
-      setNotification({ kind: 'success', message: successMessage });
+      setNotification({ kind: "success", message: successMessage });
       toast.success(successMessage);
     } catch {
-      setNotification({ kind: 'error', message: errorMessage });
+      setNotification({ kind: "error", message: errorMessage });
       toast.error(errorMessage);
     }
   }
@@ -65,8 +65,8 @@ export function BookingForm({ camperId }: BookingFormProps) {
             placeholder="Name*"
             disabled={isSubmitting}
             aria-invalid={Boolean(errors.name)}
-            aria-describedby={errors.name ? 'booking-name-error' : undefined}
-            {...register('name')}
+            aria-describedby={errors.name ? "booking-name-error" : undefined}
+            {...register("name")}
           />
           {errors.name && (
             <p id="booking-name-error" className={styles.error}>
@@ -84,8 +84,8 @@ export function BookingForm({ camperId }: BookingFormProps) {
             placeholder="Email*"
             disabled={isSubmitting}
             aria-invalid={Boolean(errors.email)}
-            aria-describedby={errors.email ? 'booking-email-error' : undefined}
-            {...register('email')}
+            aria-describedby={errors.email ? "booking-email-error" : undefined}
+            {...register("email")}
           />
           {errors.email && (
             <p id="booking-email-error" className={styles.error}>
@@ -95,14 +95,14 @@ export function BookingForm({ camperId }: BookingFormProps) {
         </div>
 
         <Button className={styles.submit} type="submit" disabled={isSubmitting}>
-          {isSubmitting ? 'Sending…' : 'Send'}
+          {isSubmitting ? "Sending…" : "Send"}
         </Button>
       </form>
 
       {notification && (
         <p
           className={styles.notification}
-          role={notification.kind === 'error' ? 'alert' : 'status'}
+          role={notification.kind === "error" ? "alert" : "status"}
         >
           {notification.message}
         </p>

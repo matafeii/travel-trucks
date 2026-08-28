@@ -1,11 +1,17 @@
-'use client';
+"use client";
 
-import { isServer, QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { Toaster } from 'sonner';
+import {
+  isServer,
+  QueryClient,
+  QueryClientProvider,
+} from "@tanstack/react-query";
+import { Toaster } from "sonner";
 
 function createQueryClient() {
   return new QueryClient({
-    defaultOptions: { queries: { staleTime: 60_000, retry: 1, refetchOnWindowFocus: false } },
+    defaultOptions: {
+      queries: { staleTime: 60_000, retry: 1, refetchOnWindowFocus: false },
+    },
   });
 }
 

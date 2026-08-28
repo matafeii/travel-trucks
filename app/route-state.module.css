@@ -1,0 +1,34 @@
+.state {
+  display: flex;
+  min-height: calc(100vh - var(--header-height));
+  align-items: center;
+  justify-content: center;
+  padding: 64px;
+  text-align: center;
+}
+
+.content {
+  display: grid;
+  max-width: 520px;
+  justify-items: center;
+  gap: 20px;
+}
+
+.content h1,
+.content p {
+  margin: 0;
+}
+
+.content h1 {
+  font-size: 32px;
+  line-height: 40px;
+}
+
+.content p {
+  color: var(--color-text-muted);
+  line-height: 24px;
+}
+
+.action {
+  min-width: 160px;
+}

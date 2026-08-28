@@ -1,14 +1,14 @@
-import Image from 'next/image';
-import Link from 'next/link';
-import { buttonClassNames } from '@/components/Button/Button';
+import Image from "next/image";
+import Link from "next/link";
+import { buttonClassNames } from "@/components/Button/Button";
 import type {
   Amenity,
   CamperForm,
   CamperListItem,
   Engine,
   Transmission,
-} from '@/types/camper';
-import styles from './CamperCard.module.css';
+} from "@/types/camper";
+import styles from "./CamperCard.module.css";
 
 interface CamperCardProps {
   camper: CamperListItem;
@@ -23,36 +23,38 @@ const featureLabels: Record<
   Amenity | CamperForm | Engine | Transmission,
   string
 > = {
-  ac: 'AC',
-  bathroom: 'Bathroom',
-  kitchen: 'Kitchen',
-  tv: 'TV',
-  radio: 'Radio',
-  refrigerator: 'Refrigerator',
-  microwave: 'Microwave',
-  gas: 'Gas',
-  water: 'Water',
-  alcove: 'Alcove',
-  panel_van: 'Panel Van',
-  integrated: 'Integrated',
-  semi_integrated: 'Semi Integrated',
-  diesel: 'Diesel',
-  petrol: 'Petrol',
-  hybrid: 'Hybrid',
-  electric: 'Electric',
-  automatic: 'Automatic',
-  manual: 'Manual',
+  ac: "AC",
+  bathroom: "Bathroom",
+  kitchen: "Kitchen",
+  tv: "TV",
+  radio: "Radio",
+  refrigerator: "Refrigerator",
+  microwave: "Microwave",
+  gas: "Gas",
+  water: "Water",
+  alcove: "Alcove",
+  panel_van: "Panel Van",
+  integrated: "Integrated",
+  semi_integrated: "Semi Integrated",
+  diesel: "Diesel",
+  petrol: "Petrol",
+  hybrid: "Hybrid",
+  electric: "Electric",
+  automatic: "Automatic",
+  manual: "Manual",
 };
 
 const featureIcons: Partial<
   Record<Amenity | CamperForm | Engine | Transmission, string>
 > = {
-  alcove: '/icons/alcove.svg',
-  automatic: '/icons/automatic.svg',
-  petrol: '/icons/petrol.svg',
+  alcove: "/icons/alcove.svg",
+  automatic: "/icons/automatic.svg",
+  petrol: "/icons/petrol.svg",
 };
 
-function toFeature(value: Amenity | CamperForm | Engine | Transmission): Feature {
+function toFeature(
+  value: Amenity | CamperForm | Engine | Transmission,
+): Feature {
   return { icon: featureIcons[value], label: featureLabels[value] };
 }
 
@@ -114,13 +116,7 @@ export function CamperCard({ camper }: CamperCardProps) {
             {features.map(({ icon, label }, index) => (
               <li key={`${label}-${index}`}>
                 {icon ? (
-                  <Image
-                    aria-hidden
-                    src={icon}
-                    alt=""
-                    width={20}
-                    height={20}
-                  />
+                  <Image aria-hidden src={icon} alt="" width={20} height={20} />
                 ) : null}
                 <span>{label}</span>
               </li>

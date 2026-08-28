@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import Image from 'next/image';
-import { useEffect } from 'react';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import { Button } from '@/components/Button/Button';
-import type { CatalogFilters as CatalogFilterValues } from '@/types/camper';
-import { catalogFiltersSchema } from './filter-schema';
-import styles from './CatalogFilters.module.css';
+import Image from "next/image";
+import { useEffect } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { Button } from "@/components/Button/Button";
+import type { CatalogFilters as CatalogFilterValues } from "@/types/camper";
+import { catalogFiltersSchema } from "./filter-schema";
+import styles from "./CatalogFilters.module.css";
 
 interface CatalogFiltersProps {
   initialFilters: CatalogFilterValues;
@@ -15,29 +15,29 @@ interface CatalogFiltersProps {
 }
 
 const emptyFilters: CatalogFilterValues = {
-  location: '',
-  form: '',
-  engine: '',
-  transmission: '',
+  location: "",
+  form: "",
+  engine: "",
+  transmission: "",
 };
 
 const camperForms = [
-  { label: 'Alcove', value: 'alcove' },
-  { label: 'Panel Van', value: 'panel_van' },
-  { label: 'Integrated', value: 'integrated' },
-  { label: 'Semi Integrated', value: 'semi_integrated' },
+  { label: "Alcove", value: "alcove" },
+  { label: "Panel Van", value: "panel_van" },
+  { label: "Integrated", value: "integrated" },
+  { label: "Semi Integrated", value: "semi_integrated" },
 ] as const;
 
 const engines = [
-  { label: 'Diesel', value: 'diesel' },
-  { label: 'Petrol', value: 'petrol' },
-  { label: 'Hybrid', value: 'hybrid' },
-  { label: 'Electric', value: 'electric' },
+  { label: "Diesel", value: "diesel" },
+  { label: "Petrol", value: "petrol" },
+  { label: "Hybrid", value: "hybrid" },
+  { label: "Electric", value: "electric" },
 ] as const;
 
 const transmissions = [
-  { label: 'Automatic', value: 'automatic' },
-  { label: 'Manual', value: 'manual' },
+  { label: "Automatic", value: "automatic" },
+  { label: "Manual", value: "manual" },
 ] as const;
 
 export function CatalogFilters({
@@ -70,7 +70,7 @@ export function CatalogFilters({
               width={20}
               height={20}
             />
-            <input {...register('location')} placeholder="City" />
+            <input {...register("location")} placeholder="City" />
           </span>
         </label>
 
@@ -82,7 +82,7 @@ export function CatalogFilters({
               <div className={styles.options}>
                 {camperForms.map(({ label, value }) => (
                   <label className={styles.option} key={value}>
-                    <input type="radio" value={value} {...register('form')} />
+                    <input type="radio" value={value} {...register("form")} />
                     <span>{label}</span>
                   </label>
                 ))}
@@ -94,7 +94,7 @@ export function CatalogFilters({
               <div className={styles.options}>
                 {engines.map(({ label, value }) => (
                   <label className={styles.option} key={value}>
-                    <input type="radio" value={value} {...register('engine')} />
+                    <input type="radio" value={value} {...register("engine")} />
                     <span>{label}</span>
                   </label>
                 ))}
@@ -109,7 +109,7 @@ export function CatalogFilters({
                     <input
                       type="radio"
                       value={value}
-                      {...register('transmission')}
+                      {...register("transmission")}
                     />
                     <span>{label}</span>
                   </label>

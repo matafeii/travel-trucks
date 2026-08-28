@@ -1,8 +1,8 @@
-import clsx from 'clsx';
-import type { ButtonHTMLAttributes } from 'react';
-import styles from './Button.module.css';
+import clsx from "clsx";
+import type { ButtonHTMLAttributes } from "react";
+import styles from "./Button.module.css";
 
-export type ButtonVariant = 'primary' | 'secondary';
+export type ButtonVariant = "primary" | "secondary";
 
 export const buttonClassNames: Readonly<Record<ButtonVariant, string>> = {
   primary: clsx(styles.button, styles.primary),
@@ -17,13 +17,17 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 export function Button({
   className,
   fullWidth = false,
-  type = 'button',
-  variant = 'primary',
+  type = "button",
+  variant = "primary",
   ...props
 }: ButtonProps) {
   return (
     <button
-      className={clsx(buttonClassNames[variant], fullWidth && styles.fullWidth, className)}
+      className={clsx(
+        buttonClassNames[variant],
+        fullWidth && styles.fullWidth,
+        className,
+      )}
       type={type}
       {...props}
     />

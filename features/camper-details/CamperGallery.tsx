@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import Image from 'next/image';
-import { useState } from 'react';
-import type { Swiper as SwiperInstance } from 'swiper';
-import { Keyboard, Thumbs } from 'swiper/modules';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import 'swiper/css';
-import 'swiper/css/thumbs';
-import type { CamperImage } from '@/types/camper';
-import styles from './CamperGallery.module.css';
+import Image from "next/image";
+import { useState } from "react";
+import type { Swiper as SwiperInstance } from "swiper";
+import { Keyboard, Thumbs } from "swiper/modules";
+import { Swiper, SwiperSlide } from "swiper/react";
+import "swiper/css";
+import "swiper/css/thumbs";
+import type { CamperImage } from "@/types/camper";
+import styles from "./CamperGallery.module.css";
 
 interface CamperGalleryProps {
   camperName: string;
@@ -61,7 +61,13 @@ export function CamperGallery({ camperName, images }: CamperGalleryProps) {
               aria-label={`Show ${camperName} image ${index + 1}`}
               onClick={() => mainSwiper?.slideTo(index)}
             >
-              <Image src={image.thumb} alt="" fill sizes="136px" />
+              <Image
+                src={image.thumb}
+                alt=""
+                fill
+                loading="eager"
+                sizes="136px"
+              />
             </button>
           </SwiperSlide>
         ))}

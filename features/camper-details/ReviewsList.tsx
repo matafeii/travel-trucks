@@ -1,13 +1,13 @@
-import { RatingStars } from '@/components/RatingStars/RatingStars';
-import type { Review } from '@/types/camper';
-import styles from './ReviewsList.module.css';
+import { RatingStars } from "@/components/RatingStars/RatingStars";
+import type { Review } from "@/types/camper";
+import styles from "./ReviewsList.module.css";
 
 interface ReviewsListProps {
   reviews: Review[];
 }
 
 function reviewerInitial(name: string): string {
-  return name.trim().charAt(0).toUpperCase() || '?';
+  return name.trim().charAt(0).toUpperCase() || "?";
 }
 
 export function ReviewsList({ reviews }: ReviewsListProps) {

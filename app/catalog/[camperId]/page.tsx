@@ -1,19 +1,19 @@
-import type { Metadata } from 'next';
-import { notFound } from 'next/navigation';
-import { Container } from '@/components/Container/Container';
-import { CamperOverview } from '@/features/camper-details/CamperOverview';
-import { getCamper, getCamperReviews } from '@/lib/api/campers';
-import { ApiError } from '@/lib/api/client';
-import type { CamperDetails } from '@/types/camper';
-import styles from './page.module.css';
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+import { Container } from "@/components/Container/Container";
+import { CamperOverview } from "@/features/camper-details/CamperOverview";
+import { getCamper, getCamperReviews } from "@/lib/api/campers";
+import { ApiError } from "@/lib/api/client";
+import type { CamperDetails } from "@/types/camper";
+import styles from "./page.module.css";
 
 interface CamperPageProps {
   params: Promise<{ camperId: string }>;
 }
 
 const missingCamperMetadata: Metadata = {
-  title: 'Camper not found | TravelTrucks',
-  description: 'The requested camper could not be found.',
+  title: "Camper not found | TravelTrucks",
+  description: "The requested camper could not be found.",
 };
 
 function isApiNotFound(error: unknown): boolean {
@@ -48,9 +48,7 @@ export async function generateMetadata({
   }
 }
 
-export default async function CamperPage({
-  params,
-}: CamperPageProps) {
+export default async function CamperPage({ params }: CamperPageProps) {
   const { camperId } = await params;
   const [camper, reviews] = await Promise.all([
     getCamperOrNotFound(camperId),

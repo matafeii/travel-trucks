@@ -121,7 +121,7 @@
   margin: 0;
   appearance: none;
   border: 0;
-  background-image: url('/icons/radio.svg');
+  background-image: url("/icons/radio.svg");
   background-position: center;
   background-repeat: no-repeat;
   background-size: 24px 24px;
@@ -129,7 +129,7 @@
 }
 
 .option input:checked {
-  background-image: url('/icons/radio-selected.svg'), url('/icons/radio.svg');
+  background-image: url("/icons/radio-selected.svg"), url("/icons/radio.svg");
   background-size:
     14px 14px,
     24px 24px;

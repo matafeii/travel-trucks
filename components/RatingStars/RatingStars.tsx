@@ -1,5 +1,5 @@
-import Image from 'next/image';
-import styles from './RatingStars.module.css';
+import Image from "next/image";
+import styles from "./RatingStars.module.css";
 
 interface RatingStarsProps {
   rating: number;
@@ -8,7 +8,10 @@ interface RatingStarsProps {
 const STAR_COUNT = 5;
 
 export function RatingStars({ rating }: RatingStarsProps) {
-  const normalizedRating = Math.max(0, Math.min(STAR_COUNT, Math.round(rating)));
+  const normalizedRating = Math.max(
+    0,
+    Math.min(STAR_COUNT, Math.round(rating)),
+  );
 
   return (
     <span
@@ -27,7 +30,7 @@ export function RatingStars({ rating }: RatingStarsProps) {
           >
             <Image
               aria-hidden
-              src={active ? '/icons/star-filled.svg' : '/icons/star-empty.svg'}
+              src={active ? "/icons/star-filled.svg" : "/icons/star-empty.svg"}
               alt=""
               width={16}
               height={16}

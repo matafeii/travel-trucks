@@ -1,9 +1,12 @@
-import nextConfig from '@/next.config';
+import nextConfig from "@/next.config";
 
-it('allows the live camper cover-image host', () => {
+it("allows the live camper cover-image host", () => {
   expect(nextConfig.images?.remotePatterns).toEqual(
     expect.arrayContaining([
-      expect.objectContaining({ protocol: 'https', hostname: 'ac.goit.global' }),
+      expect.objectContaining({
+        protocol: "https",
+        hostname: "ac.goit.global",
+      }),
     ]),
   );
 });

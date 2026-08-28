@@ -1,5 +1,5 @@
-import clsx from 'clsx';
-import styles from './Loader.module.css';
+import clsx from "clsx";
+import styles from "./Loader.module.css";
 
 interface LoaderProps {
   label?: string;
@@ -7,7 +7,7 @@ interface LoaderProps {
 }
 
 export function Loader({
-  label = 'Loading campers',
+  label = "Loading campers",
   compact = false,
 }: LoaderProps) {
   return (

@@ -44,6 +44,6 @@
 }
 
 .nav a:hover,
-.nav a[aria-current='page'] {
+.nav a[aria-current="page"] {
   color: var(--color-accent);
 }

@@ -1,16 +1,16 @@
-'use client';
+"use client";
 
-import { useEffect, useRef, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useInfiniteQuery } from '@tanstack/react-query';
-import { Button } from '@/components/Button/Button';
-import { Loader } from '@/components/Loader/Loader';
-import { getCampers } from '@/lib/api/campers';
-import type { CatalogFilters as CatalogFilterValues } from '@/types/camper';
-import { CamperList } from './CamperList';
-import { CatalogFilters } from './CatalogFilters';
-import { readFilters, writeFilters } from './url-filters';
-import styles from './CatalogClient.module.css';
+import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useInfiniteQuery } from "@tanstack/react-query";
+import { Button } from "@/components/Button/Button";
+import { Loader } from "@/components/Loader/Loader";
+import { getCampers } from "@/lib/api/campers";
+import type { CatalogFilters as CatalogFilterValues } from "@/types/camper";
+import { CamperList } from "./CamperList";
+import { CatalogFilters } from "./CatalogFilters";
+import { readFilters, writeFilters } from "./url-filters";
+import styles from "./CatalogClient.module.css";
 
 interface CatalogClientProps {
   initialFilters: CatalogFilterValues;
@@ -24,10 +24,12 @@ export function CatalogClient({ initialFilters }: CatalogClientProps) {
   const router = useRouter();
   const initialFilterKey = writeFilters(initialFilters).toString();
   const previousInitialFilterKey = useRef(initialFilterKey);
-  const [filters, setFilters] = useState(() => normalizeFilters(initialFilters));
+  const [filters, setFilters] = useState(() =>
+    normalizeFilters(initialFilters),
+  );
   const [searchRevision, setSearchRevision] = useState(0);
   const query = useInfiniteQuery({
-    queryKey: ['campers', filters, searchRevision],
+    queryKey: ["campers", filters, searchRevision],
     queryFn: ({ pageParam, signal }) => getCampers(filters, pageParam, signal),
     initialPageParam: 1,
     getNextPageParam: (lastPage) =>
@@ -51,7 +53,7 @@ export function CatalogClient({ initialFilters }: CatalogClientProps) {
     previousInitialFilterKey.current = params.toString();
     setFilters(normalizedFilters);
     setSearchRevision((revision) => revision + 1);
-    router.replace(params.size ? `/catalog?${params.toString()}` : '/catalog');
+    router.replace(params.size ? `/catalog?${params.toString()}` : "/catalog");
   }
 
   return (
@@ -67,7 +69,7 @@ export function CatalogClient({ initialFilters }: CatalogClientProps) {
         {query.isError && campers.length === 0 ? (
           <div className={styles.errorState}>
             <p className={styles.errorMessage} role="alert">
-              {query.error.message || 'Unable to load campers.'}
+              {query.error.message || "Unable to load campers."}
             </p>
             <Button
               disabled={query.isRefetching}
