@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import { BookingForm } from '@/features/booking/BookingForm';
 import { CamperGallery } from '@/features/camper-details/CamperGallery';
 import { ReviewsList } from '@/features/camper-details/ReviewsList';
 import type {
@@ -134,6 +135,7 @@ export function CamperOverview({ camper, reviews = [] }: CamperOverviewProps) {
         </div>
 
         <ReviewsList reviews={reviews} />
+        <BookingForm camperId={camper.id} />
       </div>
     </section>
   );
