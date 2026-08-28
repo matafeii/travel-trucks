@@ -29,7 +29,7 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: ReactNode }>) {
   return (
-    <html lang="uk">
+    <html lang="en">
       <body className={inter.className}>
         <Providers>
           <Header />

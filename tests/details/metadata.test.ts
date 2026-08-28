@@ -24,7 +24,7 @@ it("uses the camper name and description in dynamic metadata", async () => {
 
   expect(getCamperMock).toHaveBeenCalledWith("camper-1");
   expect(metadata).toEqual({
-    title: "Travel Truck | TravelTrucks",
+    title: "Travel Truck",
     description: longDescription.slice(0, 155),
   });
 });
@@ -35,7 +35,7 @@ it("returns useful metadata when the camper is missing", async () => {
   await expect(
     generateMetadata({ params: Promise.resolve({ camperId: "missing" }) }),
   ).resolves.toEqual({
-    title: "Camper not found | TravelTrucks",
+    title: "Camper not found",
     description: "The requested camper could not be found.",
   });
 });

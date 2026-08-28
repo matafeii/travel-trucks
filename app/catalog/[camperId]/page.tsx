@@ -12,7 +12,7 @@ interface CamperPageProps {
 }
 
 const missingCamperMetadata: Metadata = {
-  title: "Camper not found | TravelTrucks",
+  title: "Camper not found",
   description: "The requested camper could not be found.",
 };
 
@@ -37,7 +37,7 @@ export async function generateMetadata({
   try {
     const camper = await getCamper(camperId);
     return {
-      title: `${camper.name} | TravelTrucks`,
+      title: camper.name,
       description: camper.description.slice(0, 155),
     };
   } catch (error) {

@@ -1,51 +1,21 @@
-import {
-  expect,
-  test,
-  type BrowserContext,
-  type Locator,
-  type Page,
-} from "@playwright/test";
+import { expect, test, type Locator, type Page } from "@playwright/test";
 
-const image = "/images/mavericks-large.png";
-const thumb = "/images/mavericks-thumb.png";
-
-function camper(id: string, name: string) {
-  return {
-    id,
-    name,
-    price: 8000,
-    rating: 4.8,
-    totalReviews: 1,
-    location: "Ukraine, Kyiv",
-    description: "A comfortable camper for memorable trips.",
-    form: "panel_van",
-    length: "5.99m",
-    width: "2.05m",
-    height: "2.61m",
-    tank: "65l",
-    consumption: "7l/100km",
-    transmission: "automatic",
-    engine: "diesel",
-    amenities: ["ac", "kitchen"],
-    coverImage: image,
-  };
+interface BrowserIssues {
+  warnings: string[];
+  errors: string[];
+  pageErrors: string[];
 }
 
-const allCampers = [
-  camper("cmqv06hzn004hyyxtjyv3y6nl", "Alpine Roamer S1"),
-  ...Array.from({ length: 7 }, (_, index) =>
-    camper(`camper-${index + 2}`, `Travel Truck ${index + 2}`),
-  ),
-];
-
-async function watchConsole(page: Page) {
-  const errors: string[] = [];
+function watchConsole(
+  page: Page,
+  issues: BrowserIssues = { warnings: [], errors: [], pageErrors: [] },
+) {
   page.on("console", (message) => {
-    if (["error", "warning"].includes(message.type()))
-      errors.push(message.text());
+    if (message.type() === "warning") issues.warnings.push(message.text());
+    if (message.type() === "error") issues.errors.push(message.text());
   });
-  page.on("pageerror", (error) => errors.push(error.message));
-  return errors;
+  page.on("pageerror", (error) => issues.pageErrors.push(error.message));
+  return issues;
 }
 
 async function expectBox(
@@ -62,72 +32,10 @@ async function expectBox(
   }
 }
 
-async function mockApi(context: BrowserContext) {
-  await context.route(
-    "https://campers-api.goit.study/campers**",
-    async (route) => {
-      const url = new URL(route.request().url());
-      const match = url.pathname.match(
-        /^\/campers\/([^/]+)(?:\/(reviews|booking-requests))?$/,
-      );
-
-      if (match) {
-        const [, id, child] = match;
-        if (child === "reviews") {
-          return route.fulfill({
-            json: [
-              {
-                id: "review-1",
-                camperId: id,
-                reviewer_name: "Ada",
-                reviewer_rating: 5,
-                comment: "Excellent trip.",
-                createdAt: "2026-01-01",
-              },
-            ],
-          });
-        }
-        if (child === "booking-requests") {
-          return route.fulfill({ status: 201, json: { message: "Created" } });
-        }
-        const item = allCampers.find((entry) => entry.id === id);
-        return route.fulfill({
-          json: {
-            ...item,
-            gallery: [1, 2].map((order) => ({
-              id: `image-${order}`,
-              camperId: id,
-              thumb,
-              original: image,
-              order,
-            })),
-            createdAt: "2026-01-01",
-            updatedAt: "2026-01-01",
-          },
-        });
-      }
-
-      const pageNumber = Number(url.searchParams.get("page") ?? "1");
-      const start = (pageNumber - 1) * 4;
-      return route.fulfill({
-        json: {
-          page: pageNumber,
-          perPage: 4,
-          total: 8,
-          totalPages: 2,
-          campers: allCampers.slice(start, start + 4),
-        },
-      });
-    },
-  );
-}
-
-test.beforeEach(async ({ context }) => mockApi(context));
-
 test("home CTA opens the catalog without console errors", async ({
   page,
 }, testInfo) => {
-  const errors = await watchConsole(page);
+  const issues = watchConsole(page);
   await page.setViewportSize({ width: 1440, height: 768 });
   await page.goto("/");
   await expectBox(page.locator("header"), {
@@ -155,14 +63,14 @@ test("home CTA opens the catalog without console errors", async ({
   await page.getByRole("link", { name: "View Now" }).click();
   await expect(page).toHaveURL(/\/catalog$/);
   await expect(page.getByRole("article")).toHaveCount(4);
-  expect(errors).toEqual([]);
+  expect(issues).toEqual({ warnings: [], errors: [], pageErrors: [] });
 });
 
 test("filters, paging, popup details, gallery and booking work", async ({
   page,
   context,
 }, testInfo) => {
-  const errors = await watchConsole(page);
+  const issues = watchConsole(page);
   await page.goto("/catalog");
   await expectBox(page.locator("form").first(), { x: 64, y: 120, width: 360 });
   await expectBox(page.getByRole("article").first(), {
@@ -181,10 +89,17 @@ test("filters, paging, popup details, gallery and booking work", async ({
   await page.getByRole("button", { name: "Load More" }).click();
   await expect(page.getByRole("article")).toHaveCount(8);
 
+  const detailIssues: BrowserIssues = {
+    warnings: [],
+    errors: [],
+    pageErrors: [],
+  };
+  context.once("page", (popup) => watchConsole(popup, detailIssues));
   const popupPromise = context.waitForEvent("page");
   await page.getByRole("link", { name: "Show more" }).first().click();
   const details = await popupPromise;
-  const detailErrors = await watchConsole(details);
+  await expect(details.locator("html")).toHaveAttribute("lang", "en");
+  await expect(details).toHaveTitle("Alpine Roamer S1 | TravelTrucks");
   await expect(
     details.getByRole("heading", { level: 1, name: "Alpine Roamer S1" }),
   ).toBeVisible();
@@ -203,16 +118,39 @@ test("filters, paging, popup details, gallery and booking work", async ({
     path: testInfo.outputPath("details-1440.png"),
     fullPage: true,
   });
-  await details
-    .getByRole("button", { name: "Show Alpine Roamer S1 image 2" })
-    .click();
-  await expect(
-    details.getByRole("region", { name: "Alpine Roamer S1 gallery" }),
-  ).toBeVisible();
+  const mainSwiper = details
+    .getByRole("region", { name: "Alpine Roamer S1 gallery" })
+    .locator(".swiper")
+    .first();
+  const initialTransform = await mainSwiper
+    .locator(".swiper-wrapper")
+    .getAttribute("style");
+  await expect(mainSwiper.locator(".swiper-slide-active img")).toHaveAttribute(
+    "alt",
+    "Alpine Roamer S1 — image 1",
+  );
+  const secondThumbnail = details.getByRole("button", {
+    name: "Show Alpine Roamer S1 image 2",
+  });
+  await secondThumbnail.click();
+  await expect(mainSwiper.locator(".swiper-slide-active img")).toHaveAttribute(
+    "alt",
+    "Alpine Roamer S1 — image 2",
+  );
+  await expect(mainSwiper.locator(".swiper-slide-active img")).toHaveAttribute(
+    "src",
+    /road-bear-large/,
+  );
+  await expect(secondThumbnail.locator("..")).toHaveClass(
+    /swiper-slide-thumb-active/,
+  );
+  await expect
+    .poll(() => mainSwiper.locator(".swiper-wrapper").getAttribute("style"))
+    .not.toBe(initialTransform);
   await details.getByLabel("Name").fill("Ada Lovelace");
   await details.getByLabel("Email").fill("ada@example.com");
   await details.getByRole("button", { name: "Send" }).click();
   await expect(details.getByRole("status")).toContainText("Booking successful");
-  expect(errors).toEqual([]);
-  expect(detailErrors).toEqual([]);
+  expect(issues).toEqual({ warnings: [], errors: [], pageErrors: [] });
+  expect(detailIssues).toEqual({ warnings: [], errors: [], pageErrors: [] });
 });
