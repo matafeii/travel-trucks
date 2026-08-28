@@ -1,15 +1,19 @@
 import Image from 'next/image';
+import { CamperGallery } from '@/features/camper-details/CamperGallery';
+import { ReviewsList } from '@/features/camper-details/ReviewsList';
 import type {
   Amenity,
   CamperDetails,
   CamperForm,
   Engine,
   Transmission,
+  Review,
 } from '@/types/camper';
 import styles from './CamperOverview.module.css';
 
 interface CamperOverviewProps {
   camper: CamperDetails;
+  reviews?: Review[];
 }
 
 type FeatureValue = Amenity | CamperForm | Engine | Transmission;
@@ -49,10 +53,8 @@ function featureValues(camper: CamperDetails): FeatureValue[] {
   ];
 }
 
-export function CamperOverview({ camper }: CamperOverviewProps) {
+export function CamperOverview({ camper, reviews = [] }: CamperOverviewProps) {
   const reviewLabel = camper.totalReviews === 1 ? 'Review' : 'Reviews';
-  const images = [...camper.gallery].sort((left, right) => left.order - right.order);
-  const mainImage = images[0];
   const details = [
     ['Form', featureLabels[camper.form]],
     ['Length', camper.length],
@@ -64,35 +66,7 @@ export function CamperOverview({ camper }: CamperOverviewProps) {
 
   return (
     <section className={styles.overview} aria-labelledby="camper-name">
-      {mainImage ? (
-        <section className={styles.gallery} aria-label={`${camper.name} gallery`}>
-          <div className={styles.mainImage}>
-            <Image
-              src={mainImage.original}
-              alt={`${camper.name} camper`}
-              fill
-              loading="eager"
-              sizes="638px"
-            />
-          </div>
-
-          <div className={styles.thumbnails}>
-            {images.slice(0, 4).map((image, index) => (
-              <div
-                className={index === 0 ? styles.selectedThumbnail : styles.thumbnail}
-                key={image.id}
-              >
-                <Image
-                  src={image.thumb}
-                  alt={`${camper.name} thumbnail ${index + 1}`}
-                  fill
-                  sizes="136px"
-                />
-              </div>
-            ))}
-          </div>
-        </section>
-      ) : null}
+      <CamperGallery camperName={camper.name} images={camper.gallery} />
 
       <div className={styles.information}>
         <div className={styles.summaryCard}>
@@ -158,6 +132,8 @@ export function CamperOverview({ camper }: CamperOverviewProps) {
             ))}
           </dl>
         </div>
+
+        <ReviewsList reviews={reviews} />
       </div>
     </section>
   );

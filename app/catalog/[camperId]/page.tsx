@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { Container } from '@/components/Container/Container';
 import { CamperOverview } from '@/features/camper-details/CamperOverview';
-import { getCamper } from '@/lib/api/campers';
+import { getCamper, getCamperReviews } from '@/lib/api/campers';
 import { ApiError } from '@/lib/api/client';
 import type { CamperDetails } from '@/types/camper';
 import styles from './page.module.css';
@@ -52,12 +52,15 @@ export default async function CamperPage({
   params,
 }: CamperPageProps) {
   const { camperId } = await params;
-  const camper = await getCamperOrNotFound(camperId);
+  const [camper, reviews] = await Promise.all([
+    getCamperOrNotFound(camperId),
+    getCamperReviews(camperId),
+  ]);
 
   return (
     <main className={styles.main}>
       <Container>
-        <CamperOverview camper={camper} />
+        <CamperOverview camper={camper} reviews={reviews} />
       </Container>
     </main>
   );

@@ -1,26 +1,33 @@
 import { render, screen } from '@testing-library/react';
 import { ApiError } from '@/lib/api/client';
-import { camperDetails } from '@/tests/fixtures/campers';
+import { camperDetails, camperReviews } from '@/tests/fixtures/campers';
 
-const { getCamperMock, notFoundMock } = vi.hoisted(() => ({
+const { getCamperMock, getCamperReviewsMock, notFoundMock } = vi.hoisted(() => ({
   getCamperMock: vi.fn(),
+  getCamperReviewsMock: vi.fn(),
   notFoundMock: vi.fn(() => {
     throw new Error('NEXT_NOT_FOUND');
   }),
 }));
 
-vi.mock('@/lib/api/campers', () => ({ getCamper: getCamperMock }));
+vi.mock('@/lib/api/campers', () => ({
+  getCamper: getCamperMock,
+  getCamperReviews: getCamperReviewsMock,
+}));
 vi.mock('next/navigation', () => ({ notFound: notFoundMock }));
 
 import CamperPage from '@/app/catalog/[camperId]/page';
 
 beforeEach(() => {
   getCamperMock.mockReset();
+  getCamperReviewsMock.mockReset();
+  getCamperReviewsMock.mockResolvedValue([]);
   notFoundMock.mockClear();
 });
 
 it('renders the camper overview from the requested id', async () => {
   getCamperMock.mockResolvedValue(camperDetails);
+  getCamperReviewsMock.mockResolvedValue(camperReviews);
 
   render(
     await CamperPage({
@@ -29,6 +36,7 @@ it('renders the camper overview from the requested id', async () => {
   );
 
   expect(getCamperMock).toHaveBeenCalledWith('camper/one');
+  expect(getCamperReviewsMock).toHaveBeenCalledWith('camper/one');
   expect(screen.getByRole('heading', { level: 1, name: 'Travel Truck' })).toBeInTheDocument();
   expect(screen.getByText('€8000.00')).toBeInTheDocument();
   expect(screen.getByText('Kyiv, Ukraine')).toBeInTheDocument();
@@ -39,10 +47,27 @@ it('renders the camper overview from the requested id', async () => {
   expect(
     screen.getByRole('region', { name: 'Travel Truck gallery' }),
   ).toBeInTheDocument();
-  expect(screen.getByRole('img', { name: 'Travel Truck camper' })).toHaveAttribute(
+  expect(screen.getByRole('img', { name: 'Travel Truck — image 1' })).toHaveAttribute(
     'loading',
     'eager',
   );
+  expect(screen.getByText('Ada Lovelace')).toBeInTheDocument();
+  expect(screen.getByText('Excellent trip.')).toBeInTheDocument();
+});
+
+it('starts camper and review requests concurrently', async () => {
+  let resolveCamper: (value: typeof camperDetails) => void = () => undefined;
+  getCamperMock.mockImplementation(
+    () => new Promise((resolve) => {
+      resolveCamper = resolve;
+    }),
+  );
+  getCamperReviewsMock.mockResolvedValue([]);
+
+  const page = CamperPage({ params: Promise.resolve({ camperId: 'camper/one' }) });
+  await vi.waitFor(() => expect(getCamperReviewsMock).toHaveBeenCalledWith('camper/one'));
+  resolveCamper(camperDetails);
+  await page;
 });
 
 it('maps only an API 404 to the not-found route', async () => {
