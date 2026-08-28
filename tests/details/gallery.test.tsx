@@ -50,6 +50,18 @@ it('renders original images in API order with descriptive alt text', () => {
   });
 });
 
+it('loads every main slide eagerly while keeping thumbnails lazy', () => {
+  render(<CamperGallery camperName="Road Bear" images={images} />);
+
+  const mainImages = screen.getAllByRole('img', { name: /Road Bear — image/ });
+  expect(mainImages).toHaveLength(3);
+  mainImages.forEach((image) => expect(image).toHaveAttribute('loading', 'eager'));
+
+  const thumbnailImages = screen.getAllByRole('presentation', { hidden: true });
+  expect(thumbnailImages).toHaveLength(3);
+  thumbnailImages.forEach((image) => expect(image).toHaveAttribute('loading', 'lazy'));
+});
+
 it('enables keyboard navigation and lets a thumbnail select its matching slide', async () => {
   const user = userEvent.setup();
   render(<CamperGallery camperName="Road Bear" images={images} />);

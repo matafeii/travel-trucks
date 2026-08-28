@@ -38,7 +38,7 @@ export function CamperGallery({ camperName, images }: CamperGalleryProps) {
               src={image.original}
               alt={`${camperName} — image ${index + 1}`}
               fill
-              loading={index === 0 ? 'eager' : 'lazy'}
+              loading="eager"
               sizes="638px"
             />
           </SwiperSlide>
