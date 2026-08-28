@@ -65,7 +65,7 @@ export function CamperOverview({ camper }: CamperOverviewProps) {
   return (
     <section className={styles.overview} aria-labelledby="camper-name">
       {mainImage ? (
-        <div className={styles.gallery} aria-label={`${camper.name} gallery`}>
+        <section className={styles.gallery} aria-label={`${camper.name} gallery`}>
           <div className={styles.mainImage}>
             <Image
               src={mainImage.original}
@@ -91,7 +91,7 @@ export function CamperOverview({ camper }: CamperOverviewProps) {
               </div>
             ))}
           </div>
-        </div>
+        </section>
       ) : null}
 
       <div className={styles.information}>
@@ -123,7 +123,7 @@ export function CamperOverview({ camper }: CamperOverviewProps) {
                 </span>
               </div>
 
-              <p className={styles.price}>€{camper.price}</p>
+              <p className={styles.price}>€{camper.price.toFixed(2)}</p>
             </div>
           </div>
 

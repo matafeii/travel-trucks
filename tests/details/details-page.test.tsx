@@ -30,12 +30,15 @@ it('renders the camper overview from the requested id', async () => {
 
   expect(getCamperMock).toHaveBeenCalledWith('camper/one');
   expect(screen.getByRole('heading', { level: 1, name: 'Travel Truck' })).toBeInTheDocument();
-  expect(screen.getByText('€8000')).toBeInTheDocument();
+  expect(screen.getByText('€8000.00')).toBeInTheDocument();
   expect(screen.getByText('Kyiv, Ukraine')).toBeInTheDocument();
   expect(screen.getByText('4.8 (1 Review)')).toBeInTheDocument();
   expect(screen.getByText('A compact camper for two.')).toBeInTheDocument();
   expect(screen.getByRole('heading', { level: 2, name: 'Vehicle details' })).toBeInTheDocument();
   expect(screen.getAllByText('Panel truck')).toHaveLength(2);
+  expect(
+    screen.getByRole('region', { name: 'Travel Truck gallery' }),
+  ).toBeInTheDocument();
   expect(screen.getByRole('img', { name: 'Travel Truck camper' })).toHaveAttribute(
     'loading',
     'eager',
