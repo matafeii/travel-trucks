@@ -57,12 +57,14 @@ tests/
 ## Task 1: Application Foundation and Test Harness
 
 **Files:**
+
 - Create: `package.json`, `next.config.ts`, `tsconfig.json`, `eslint.config.mjs`, `.prettierrc.json`, `vitest.config.ts`, `playwright.config.ts`
 - Create: `app/layout.tsx`, `app/providers.tsx`, `app/globals.css`, `styles/tokens.css`
 - Create: `tests/setup.ts`, `tests/smoke/providers.test.tsx`
 - Modify: `.gitignore`
 
 **Interfaces:**
+
 - Produces: `Providers({ children }: { children: React.ReactNode }): JSX.Element`
 - Produces: global CSS variables and the root TanStack Query/Sonner providers used by every later task.
 
@@ -102,13 +104,17 @@ Add scripts to `package.json`:
 Create `tests/smoke/providers.test.tsx`:
 
 ```tsx
-import { render, screen } from '@testing-library/react';
-import { Providers } from '@/app/providers';
+import { render, screen } from "@testing-library/react";
+import { Providers } from "@/app/providers";
 
-describe('Providers', () => {
-  it('renders children inside application providers', () => {
-    render(<Providers><p>TravelTrucks ready</p></Providers>);
-    expect(screen.getByText('TravelTrucks ready')).toBeInTheDocument();
+describe("Providers", () => {
+  it("renders children inside application providers", () => {
+    render(
+      <Providers>
+        <p>TravelTrucks ready</p>
+      </Providers>,
+    );
+    expect(screen.getByText("TravelTrucks ready")).toBeInTheDocument();
   });
 });
 ```
@@ -124,34 +130,44 @@ Expected: FAIL because `@/app/providers` does not exist.
 Create `vitest.config.ts`:
 
 ```ts
-import path from 'node:path';
-import { defineConfig } from 'vitest/config';
-import react from '@vitejs/plugin-react';
+import path from "node:path";
+import { defineConfig } from "vitest/config";
+import react from "@vitejs/plugin-react";
 
 export default defineConfig({
   plugins: [react()],
-  test: { environment: 'jsdom', globals: true, setupFiles: ['./tests/setup.ts'] },
-  resolve: { alias: { '@': path.resolve(__dirname, '.') } },
+  test: {
+    environment: "jsdom",
+    globals: true,
+    setupFiles: ["./tests/setup.ts"],
+  },
+  resolve: { alias: { "@": path.resolve(__dirname, ".") } },
 });
 ```
 
 Create `tests/setup.ts`:
 
 ```ts
-import '@testing-library/jest-dom/vitest';
+import "@testing-library/jest-dom/vitest";
 ```
 
 Create `app/providers.tsx`:
 
 ```tsx
-'use client';
+"use client";
 
-import { isServer, QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { Toaster } from 'sonner';
+import {
+  isServer,
+  QueryClient,
+  QueryClientProvider,
+} from "@tanstack/react-query";
+import { Toaster } from "sonner";
 
 function createQueryClient() {
   return new QueryClient({
-    defaultOptions: { queries: { staleTime: 60_000, retry: 1, refetchOnWindowFocus: false } },
+    defaultOptions: {
+      queries: { staleTime: 60_000, retry: 1, refetchOnWindowFocus: false },
+    },
   });
 }
 
@@ -218,6 +234,7 @@ git commit -m "chore: scaffold TravelTrucks application"
 ## Task 2: Figma Inventory, Assets, and Shared Shell
 
 **Files:**
+
 - Create: `components/Container/Container.tsx`, `components/Container/Container.module.css`
 - Create: `components/Header/Header.tsx`, `components/Header/Header.module.css`
 - Create: `components/Button/Button.tsx`, `components/Button/Button.module.css`
@@ -226,6 +243,7 @@ git commit -m "chore: scaffold TravelTrucks application"
 - Test: `tests/components/header.test.tsx`
 
 **Interfaces:**
+
 - Produces: `Container`, `Header`, and polymorphism-free `Button`/link styles reused by all pages.
 - Consumes: `Providers` and global tokens from Task 1.
 
@@ -246,15 +264,20 @@ Expected: `public/images/` and `public/icons/` contain only assets referenced by
 Create `tests/components/header.test.tsx`:
 
 ```tsx
-import { render, screen } from '@testing-library/react';
-import { Header } from '@/components/Header/Header';
+import { render, screen } from "@testing-library/react";
+import { Header } from "@/components/Header/Header";
 
-vi.mock('next/navigation', () => ({ usePathname: () => '/catalog' }));
+vi.mock("next/navigation", () => ({ usePathname: () => "/catalog" }));
 
-it('marks Catalog as the current route', () => {
+it("marks Catalog as the current route", () => {
   render(<Header />);
-  expect(screen.getByRole('link', { name: 'Catalog' })).toHaveAttribute('aria-current', 'page');
-  expect(screen.getByRole('link', { name: 'Home' })).not.toHaveAttribute('aria-current');
+  expect(screen.getByRole("link", { name: "Catalog" })).toHaveAttribute(
+    "aria-current",
+    "page",
+  );
+  expect(screen.getByRole("link", { name: "Home" })).not.toHaveAttribute(
+    "aria-current",
+  );
 });
 ```
 
@@ -269,15 +292,18 @@ Expected: FAIL because `Header` does not exist.
 Implement `Header.tsx`:
 
 ```tsx
-'use client';
+"use client";
 
-import Image from 'next/image';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { Container } from '@/components/Container/Container';
-import styles from './Header.module.css';
+import Image from "next/image";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { Container } from "@/components/Container/Container";
+import styles from "./Header.module.css";
 
-const links = [{ href: '/', label: 'Home' }, { href: '/catalog', label: 'Catalog' }];
+const links = [
+  { href: "/", label: "Home" },
+  { href: "/catalog", label: "Catalog" },
+];
 
 export function Header() {
   const pathname = usePathname();
@@ -285,12 +311,27 @@ export function Header() {
     <header className={styles.header}>
       <Container className={styles.inner}>
         <Link href="/" aria-label="TravelTrucks home" className={styles.logo}>
-          <Image src="/icons/logo.svg" alt="TravelTrucks" width={136} height={16} priority />
+          <Image
+            src="/icons/logo.svg"
+            alt="TravelTrucks"
+            width={136}
+            height={16}
+            priority
+          />
         </Link>
         <nav aria-label="Primary navigation" className={styles.nav}>
           {links.map(({ href, label }) => {
-            const active = href === '/' ? pathname === '/' : pathname.startsWith(href);
-            return <Link key={href} href={href} aria-current={active ? 'page' : undefined}>{label}</Link>;
+            const active =
+              href === "/" ? pathname === "/" : pathname.startsWith(href);
+            return (
+              <Link
+                key={href}
+                href={href}
+                aria-current={active ? "page" : undefined}
+              >
+                {label}
+              </Link>
+            );
           })}
         </nav>
       </Container>
@@ -312,6 +353,7 @@ Commit: `git add app/layout.tsx components public styles tests/components; git c
 ## Task 3: Typed API Client and Query Contract
 
 **Files:**
+
 - Create: `types/camper.ts`
 - Create: `lib/api/client.ts`, `lib/api/query.ts`, `lib/api/campers.ts`
 - Create: `lib/formatters.ts`
@@ -320,6 +362,7 @@ Commit: `git add app/layout.tsx components public styles tests/components; git c
 - Modify: `tests/setup.ts`, `next.config.ts`
 
 **Interfaces:**
+
 - Produces: `CatalogFilters`, `CamperListResponse`, `CamperDetails`, `Review`, `BookingRequest`.
 - Produces: `buildCampersSearchParams(filters, page): URLSearchParams`.
 - Produces: `getCampers`, `getCamper`, `getCamperReviews`, `createBookingRequest`.
@@ -329,45 +372,98 @@ Commit: `git add app/layout.tsx components public styles tests/components; git c
 Create discriminated literal unions and response models in `types/camper.ts`:
 
 ```ts
-export type CamperForm = 'alcove' | 'panel_van' | 'integrated' | 'semi_integrated';
-export type Transmission = 'automatic' | 'manual';
-export type Engine = 'diesel' | 'petrol' | 'hybrid' | 'electric';
-export type Amenity = 'ac' | 'bathroom' | 'kitchen' | 'tv' | 'radio' | 'refrigerator' | 'microwave' | 'gas' | 'water';
+export type CamperForm =
+  "alcove" | "panel_van" | "integrated" | "semi_integrated";
+export type Transmission = "automatic" | "manual";
+export type Engine = "diesel" | "petrol" | "hybrid" | "electric";
+export type Amenity =
+  | "ac"
+  | "bathroom"
+  | "kitchen"
+  | "tv"
+  | "radio"
+  | "refrigerator"
+  | "microwave"
+  | "gas"
+  | "water";
 
 export interface CatalogFilters {
   location: string;
-  form: CamperForm | '';
-  transmission: Transmission | '';
-  engine: Engine | '';
+  form: CamperForm | "";
+  transmission: Transmission | "";
+  engine: Engine | "";
 }
 
 export interface CamperListItem {
-  id: string; name: string; price: number; rating: number; location: string;
-  form: CamperForm; length: string; width: string; height: string;
-  tank: string; consumption: string; transmission: Transmission; engine: Engine;
-  amenities: Amenity[]; coverImage: string; totalReviews: number;
+  id: string;
+  name: string;
+  price: number;
+  rating: number;
+  location: string;
+  form: CamperForm;
+  length: string;
+  width: string;
+  height: string;
+  tank: string;
+  consumption: string;
+  transmission: Transmission;
+  engine: Engine;
+  amenities: Amenity[];
+  coverImage: string;
+  totalReviews: number;
 }
 
 export interface CamperListResponse {
-  page: number; perPage: number; total: number; totalPages: number; campers: CamperListItem[];
+  page: number;
+  perPage: number;
+  total: number;
+  totalPages: number;
+  campers: CamperListItem[];
 }
 
 export interface CamperImage {
-  id: string; camperId: string; thumb: string; original: string; order: number;
+  id: string;
+  camperId: string;
+  thumb: string;
+  original: string;
+  order: number;
 }
 export interface CamperDetails {
-  id: string; name: string; price: number; rating: number; totalReviews: number;
-  location: string; description: string; form: CamperForm; length: string;
-  width: string; height: string; tank: string; consumption: string;
-  transmission: Transmission; engine: Engine; amenities: Amenity[];
-  gallery: CamperImage[]; createdAt: string; updatedAt: string;
+  id: string;
+  name: string;
+  price: number;
+  rating: number;
+  totalReviews: number;
+  location: string;
+  description: string;
+  form: CamperForm;
+  length: string;
+  width: string;
+  height: string;
+  tank: string;
+  consumption: string;
+  transmission: Transmission;
+  engine: Engine;
+  amenities: Amenity[];
+  gallery: CamperImage[];
+  createdAt: string;
+  updatedAt: string;
 }
 export interface Review {
-  id: string; camperId: string; reviewer_name: string; reviewer_rating: number;
-  comment: string; createdAt: string;
+  id: string;
+  camperId: string;
+  reviewer_name: string;
+  reviewer_rating: number;
+  comment: string;
+  createdAt: string;
 }
-export interface BookingRequest { name: string; email: string; }
-export interface BookingResponse { message: string; }
+export interface BookingRequest {
+  name: string;
+  email: string;
+}
+export interface BookingResponse {
+  message: string;
+}
 ```
 
 - [ ] **Step 2: Write query builder tests**
@@ -375,16 +471,29 @@ export interface BookingResponse { message: string; }
 Create `tests/lib/query.test.ts`:
 
 ```ts
-import { buildCampersSearchParams } from '@/lib/api/query';
+import { buildCampersSearchParams } from "@/lib/api/query";
 
-it('serializes paging and only active backend filters', () => {
-  const params = buildCampersSearchParams({ location: ' Kyiv ', form: 'panel_van', engine: 'diesel', transmission: '' }, 2);
-  expect(params.toString()).toBe('page=2&perPage=4&location=Kyiv&form=panel_van&engine=diesel');
+it("serializes paging and only active backend filters", () => {
+  const params = buildCampersSearchParams(
+    {
+      location: " Kyiv ",
+      form: "panel_van",
+      engine: "diesel",
+      transmission: "",
+    },
+    2,
+  );
+  expect(params.toString()).toBe(
+    "page=2&perPage=4&location=Kyiv&form=panel_van&engine=diesel",
+  );
 });
 
-it('omits empty filters', () => {
-  const params = buildCampersSearchParams({ location: '', form: '', engine: '', transmission: '' }, 1);
-  expect(params.toString()).toBe('page=1&perPage=4');
+it("omits empty filters", () => {
+  const params = buildCampersSearchParams(
+    { location: "", form: "", engine: "", transmission: "" },
+    1,
+  );
+  expect(params.toString()).toBe("page=1&perPage=4");
 });
 ```
 
@@ -399,15 +508,18 @@ Expected: FAIL because the query module does not exist.
 Create `lib/api/query.ts`:
 
 ```ts
-import type { CatalogFilters } from '@/types/camper';
+import type { CatalogFilters } from "@/types/camper";
 
-export function buildCampersSearchParams(filters: CatalogFilters, page: number) {
-  const params = new URLSearchParams({ page: String(page), perPage: '4' });
+export function buildCampersSearchParams(
+  filters: CatalogFilters,
+  page: number,
+) {
+  const params = new URLSearchParams({ page: String(page), perPage: "4" });
   const location = filters.location.trim();
-  if (location) params.set('location', location);
-  if (filters.form) params.set('form', filters.form);
-  if (filters.engine) params.set('engine', filters.engine);
-  if (filters.transmission) params.set('transmission', filters.transmission);
+  if (location) params.set("location", location);
+  if (filters.form) params.set("form", filters.form);
+  if (filters.engine) params.set("engine", filters.engine);
+  if (filters.transmission) params.set("transmission", filters.transmission);
   return params;
 }
 ```
@@ -419,10 +531,17 @@ Create `lib/api/client.ts` with `API_BASE_URL`, an `ApiError` carrying `status`,
 Implement these exact exports in `lib/api/campers.ts`:
 
 ```ts
-export function getCampers(filters: CatalogFilters, page: number, signal?: AbortSignal): Promise<CamperListResponse>;
+export function getCampers(
+  filters: CatalogFilters,
+  page: number,
+  signal?: AbortSignal,
+): Promise<CamperListResponse>;
 export function getCamper(camperId: string): Promise<CamperDetails>;
 export function getCamperReviews(camperId: string): Promise<Review[]>;
-export function createBookingRequest(camperId: string, data: BookingRequest): Promise<BookingResponse>;
+export function createBookingRequest(
+  camperId: string,
+  data: BookingRequest,
+): Promise<BookingResponse>;
 ```
 
 `getCampers` calls `/campers?${buildCampersSearchParams(filters, page)}`. `getCamper` calls `/campers/${encodeURIComponent(camperId)}`. Reviews and booking use the exact documented child routes; booking sends `Content-Type: application/json` and `JSON.stringify(data)`.
@@ -440,24 +559,31 @@ Commit: `git add types lib tests next.config.ts; git commit -m "feat: add typed 
 ## Task 4: Pixel-Accurate Home Page
 
 **Files:**
+
 - Modify: `app/page.tsx`
 - Create: `app/page.module.css`
 - Test: `tests/pages/home.test.tsx`
 
 **Interfaces:**
+
 - Consumes: Figma hero asset, `Container`, header shell and global tokens.
 - Produces: accessible `View Now` link to `/catalog`.
 
 - [ ] **Step 1: Write the failing Home page test**
 
 ```tsx
-import { render, screen } from '@testing-library/react';
-import HomePage from '@/app/page';
+import { render, screen } from "@testing-library/react";
+import HomePage from "@/app/page";
 
-it('renders the hero CTA linking to the catalog', () => {
+it("renders the hero CTA linking to the catalog", () => {
   render(<HomePage />);
-  expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Campers of your dreams');
-  expect(screen.getByRole('link', { name: 'View Now' })).toHaveAttribute('href', '/catalog');
+  expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
+    "Campers of your dreams",
+  );
+  expect(screen.getByRole("link", { name: "View Now" })).toHaveAttribute(
+    "href",
+    "/catalog",
+  );
 });
 ```
 
@@ -470,8 +596,8 @@ Expected: FAIL because the scaffold page does not contain the TravelTrucks hero.
 - [ ] **Step 3: Implement semantic hero markup**
 
 ```tsx
-import Link from 'next/link';
-import styles from './page.module.css';
+import Link from "next/link";
+import styles from "./page.module.css";
 
 export default function HomePage() {
   return (
@@ -479,7 +605,9 @@ export default function HomePage() {
       <div className={styles.content}>
         <h1>Campers of your dreams</h1>
         <p>You can find everything you want in our catalog</p>
-        <Link href="/catalog" className={styles.cta}>View Now</Link>
+        <Link href="/catalog" className={styles.cta}>
+          View Now
+        </Link>
       </div>
     </main>
   );
@@ -503,11 +631,13 @@ Commit: `git add app/page.tsx app/page.module.css tests/pages/home.test.tsx; git
 ## Task 5: Catalog Filters and URL State
 
 **Files:**
+
 - Create: `features/catalog/CatalogFilters.tsx`, `features/catalog/CatalogFilters.module.css`
 - Create: `features/catalog/filter-schema.ts`, `features/catalog/url-filters.ts`
 - Test: `tests/catalog/filters.test.tsx`, `tests/catalog/url-filters.test.ts`
 
 **Interfaces:**
+
 - Produces: `CatalogFilters({ initialFilters, onApply })`.
 - Produces: `readFilters(searchParams)` and `writeFilters(filters)`.
 - Consumes: `CatalogFilters` type from Task 3.
@@ -518,12 +648,22 @@ Test that the form:
 
 ```tsx
 const onApply = vi.fn();
-render(<CatalogFilters initialFilters={{ location: '', form: '', engine: '', transmission: '' }} onApply={onApply} />);
-await user.type(screen.getByLabelText('Location'), 'Kyiv');
-await user.click(screen.getByRole('radio', { name: 'Van' }));
-await user.click(screen.getByRole('radio', { name: 'Diesel' }));
-await user.click(screen.getByRole('button', { name: 'Search' }));
-expect(onApply).toHaveBeenCalledWith({ location: 'Kyiv', form: 'panel_van', engine: 'diesel', transmission: '' });
+render(
+  <CatalogFilters
+    initialFilters={{ location: "", form: "", engine: "", transmission: "" }}
+    onApply={onApply}
+  />,
+);
+await user.type(screen.getByLabelText("Location"), "Kyiv");
+await user.click(screen.getByRole("radio", { name: "Van" }));
+await user.click(screen.getByRole("radio", { name: "Diesel" }));
+await user.click(screen.getByRole("button", { name: "Search" }));
+expect(onApply).toHaveBeenCalledWith({
+  location: "Kyiv",
+  form: "panel_van",
+  engine: "diesel",
+  transmission: "",
+});
 ```
 
 Also assert that selecting `Automatic` then `Manual` leaves only `Manual` checked.
@@ -553,6 +693,7 @@ Commit: `git add features/catalog tests/catalog; git commit -m "feat: add catalo
 ## Task 6: Infinite Catalog, Camper Cards, and Load More
 
 **Files:**
+
 - Modify: `app/catalog/page.tsx`
 - Create: `app/catalog/page.module.css`
 - Create: `features/catalog/CatalogClient.tsx`, `features/catalog/CatalogClient.module.css`
@@ -561,6 +702,7 @@ Commit: `git add features/catalog tests/catalog; git commit -m "feat: add catalo
 - Test: `tests/catalog/catalog-client.test.tsx`, `tests/catalog/camper-card.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `getCampers`, `CatalogFilters`, URL helpers and `CamperListItem`.
 - Produces: route `/catalog` with four-item backend pages and `Show more` links.
 
@@ -569,10 +711,12 @@ Commit: `git add features/catalog tests/catalog; git commit -m "feat: add catalo
 Use MSW with page 1 and page 2 fixtures. Assert:
 
 ```tsx
-expect(await screen.findAllByRole('article')).toHaveLength(4);
-await user.click(screen.getByRole('button', { name: 'Load More' }));
-expect(await screen.findAllByRole('article')).toHaveLength(8);
-expect(screen.queryByRole('button', { name: 'Load More' })).not.toBeInTheDocument();
+expect(await screen.findAllByRole("article")).toHaveLength(4);
+await user.click(screen.getByRole("button", { name: "Load More" }));
+expect(await screen.findAllByRole("article")).toHaveLength(8);
+expect(
+  screen.queryByRole("button", { name: "Load More" }),
+).not.toBeInTheDocument();
 ```
 
 Submit a new filter and assert that only the new filtered first page remains, proving the query key resets pagination.
@@ -582,10 +726,10 @@ Submit a new filter and assert that only the new filtered first page remains, pr
 Render a fixture card and assert:
 
 ```tsx
-const link = screen.getByRole('link', { name: 'Show more' });
-expect(link).toHaveAttribute('href', `/catalog/${camper.id}`);
-expect(link).toHaveAttribute('target', '_blank');
-expect(link).toHaveAttribute('rel', 'noopener noreferrer');
+const link = screen.getByRole("link", { name: "Show more" });
+expect(link).toHaveAttribute("href", `/catalog/${camper.id}`);
+expect(link).toHaveAttribute("target", "_blank");
+expect(link).toHaveAttribute("rel", "noopener noreferrer");
 ```
 
 - [ ] **Step 3: Run catalog tests and verify failure**
@@ -600,10 +744,11 @@ Core hook configuration in `CatalogClient.tsx`:
 
 ```tsx
 const query = useInfiniteQuery({
-  queryKey: ['campers', filters],
+  queryKey: ["campers", filters],
   queryFn: ({ pageParam, signal }) => getCampers(filters, pageParam, signal),
   initialPageParam: 1,
-  getNextPageParam: (lastPage) => lastPage.page < lastPage.totalPages ? lastPage.page + 1 : undefined,
+  getNextPageParam: (lastPage) =>
+    lastPage.page < lastPage.totalPages ? lastPage.page + 1 : undefined,
 });
 
 const campers = query.data?.pages.flatMap((page) => page.campers) ?? [];
@@ -630,11 +775,13 @@ Commit: `git add app/catalog features/catalog components/Loader tests/catalog; g
 ## Task 7: Camper Details Route and Dynamic Metadata
 
 **Files:**
+
 - Create: `app/catalog/[camperId]/page.tsx`, `app/catalog/[camperId]/page.module.css`
 - Create: `features/camper-details/CamperOverview.tsx`, corresponding CSS Module
 - Test: `tests/details/details-page.test.tsx`, `tests/details/metadata.test.ts`
 
 **Interfaces:**
+
 - Consumes: `getCamper(id)` and `CamperDetails`.
 - Produces: server route using `params: Promise<{ camperId: string }>` and dynamic metadata.
 
@@ -653,16 +800,27 @@ Expected: FAIL because the dynamic route does not exist.
 Use current Next.js async params:
 
 ```tsx
-export async function generateMetadata({ params }: PageProps<'/catalog/[camperId]'>): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: PageProps<"/catalog/[camperId]">): Promise<Metadata> {
   const { camperId } = await params;
   const camper = await getCamper(camperId);
-  return { title: `${camper.name} | TravelTrucks`, description: camper.description.slice(0, 155) };
+  return {
+    title: `${camper.name} | TravelTrucks`,
+    description: camper.description.slice(0, 155),
+  };
 }
 
-export default async function CamperPage({ params }: PageProps<'/catalog/[camperId]'>) {
+export default async function CamperPage({
+  params,
+}: PageProps<"/catalog/[camperId]">) {
   const { camperId } = await params;
   const camper = await getCamper(camperId);
-  return <main><CamperOverview camper={camper} /></main>;
+  return (
+    <main>
+      <CamperOverview camper={camper} />
+    </main>
+  );
 }
 ```
 
@@ -683,6 +841,7 @@ Commit: `git add app/catalog/[camperId] features/camper-details tests/details; g
 ## Task 8: Gallery and Reviews
 
 **Files:**
+
 - Create: `features/camper-details/CamperGallery.tsx`, `features/camper-details/CamperGallery.module.css`
 - Create: `features/camper-details/ReviewsList.tsx`, `features/camper-details/ReviewsList.module.css`
 - Create: `components/RatingStars/RatingStars.tsx`, corresponding CSS Module
@@ -690,6 +849,7 @@ Commit: `git add app/catalog/[camperId] features/camper-details tests/details; g
 - Test: `tests/details/gallery.test.tsx`, `tests/details/reviews.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `CamperImage[]` from `camper.gallery`, `Review[]`, `getCamperReviews(camperId)`.
 - Produces: keyboard-operable Swiper gallery and five-star review rendering.
 
@@ -697,10 +857,10 @@ Commit: `git add app/catalog/[camperId] features/camper-details tests/details; g
 
 ```tsx
 render(<RatingStars rating={3} />);
-const stars = screen.getAllByTestId('rating-star');
+const stars = screen.getAllByTestId("rating-star");
 expect(stars).toHaveLength(5);
-expect(stars.filter((star) => star.dataset.active === 'true')).toHaveLength(3);
-expect(screen.getByLabelText('3 out of 5 stars')).toBeInTheDocument();
+expect(stars.filter((star) => star.dataset.active === "true")).toHaveLength(3);
+expect(screen.getByLabelText("3 out of 5 stars")).toBeInTheDocument();
 ```
 
 - [ ] **Step 2: Write failing gallery test**
@@ -732,11 +892,13 @@ Commit: `git add app/catalog/[camperId] features/camper-details components/Ratin
 ## Task 9: Booking Form and Notifications
 
 **Files:**
+
 - Create: `features/booking/BookingForm.tsx`, `features/booking/BookingForm.module.css`, `features/booking/booking-schema.ts`
 - Modify: `app/catalog/[camperId]/page.tsx`
 - Test: `tests/booking/booking-form.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `createBookingRequest(camperId, { name, email })`.
 - Produces: validated form, 201 success notification, reset, pending/error states.
 
@@ -745,14 +907,17 @@ Commit: `git add app/catalog/[camperId] features/camper-details components/Ratin
 Assert that empty submit shows required messages without API call. Then:
 
 ```tsx
-await user.type(screen.getByLabelText('Name'), 'Tymo');
-await user.type(screen.getByLabelText('Email'), 'tymo@example.com');
-await user.click(screen.getByRole('button', { name: 'Send' }));
-await waitFor(() => expect(createBookingRequest).toHaveBeenCalledWith('camper-1', {
-  name: 'Tymo', email: 'tymo@example.com',
-}));
-expect(toast.success).toHaveBeenCalledWith('Booking successful');
-expect(screen.getByLabelText('Name')).toHaveValue('');
+await user.type(screen.getByLabelText("Name"), "Tymo");
+await user.type(screen.getByLabelText("Email"), "tymo@example.com");
+await user.click(screen.getByRole("button", { name: "Send" }));
+await waitFor(() =>
+  expect(createBookingRequest).toHaveBeenCalledWith("camper-1", {
+    name: "Tymo",
+    email: "tymo@example.com",
+  }),
+);
+expect(toast.success).toHaveBeenCalledWith("Booking successful");
+expect(screen.getByLabelText("Name")).toHaveValue("");
 ```
 
 Also reject `tymo@` and verify a 500 response keeps entered values and calls `toast.error`.
@@ -769,8 +934,8 @@ Create schema:
 
 ```ts
 export const bookingSchema = z.object({
-  name: z.string().trim().min(2, 'Enter at least 2 characters').max(80),
-  email: z.string().trim().email('Enter a valid email address').max(254),
+  name: z.string().trim().min(2, "Enter at least 2 characters").max(80),
+  email: z.string().trim().email("Enter a valid email address").max(254),
 });
 ```
 
@@ -793,6 +958,7 @@ Commit: `git add app/catalog/[camperId] features/booking tests/booking; git comm
 ## Task 10: Route States, E2E Coverage, Visual QA, and Handoff
 
 **Files:**
+
 - Create: `app/loading.tsx`, `app/error.tsx`, `app/not-found.tsx`
 - Create: `app/catalog/loading.tsx`, `app/catalog/error.tsx`
 - Create: `app/catalog/[camperId]/loading.tsx`, `app/catalog/[camperId]/error.tsx`, `app/catalog/[camperId]/not-found.tsx`
@@ -801,6 +967,7 @@ Commit: `git add app/catalog/[camperId] features/booking tests/booking; git comm
 - Modify: `app/layout.tsx`, route metadata, `.gitignore`
 
 **Interfaces:**
+
 - Consumes: all completed routes and features.
 - Produces: complete scoring-criteria coverage and deploy-ready repository.
 
@@ -809,20 +976,20 @@ Commit: `git add app/catalog/[camperId] features/booking tests/booking; git comm
 Create tests that:
 
 ```ts
-test('home CTA opens the catalog', async ({ page }) => {
-  await page.goto('/');
-  await page.getByRole('link', { name: 'View Now' }).click();
+test("home CTA opens the catalog", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("link", { name: "View Now" }).click();
   await expect(page).toHaveURL(/\/catalog$/);
-  await expect(page.getByRole('article')).toHaveCount(4);
+  await expect(page.getByRole("article")).toHaveCount(4);
 });
 
-test('filters and Load More use backend paging', async ({ page }) => {
-  await page.goto('/catalog');
-  await page.getByLabel('Location').fill('Kyiv');
-  await page.getByRole('button', { name: 'Search' }).click();
+test("filters and Load More use backend paging", async ({ page }) => {
+  await page.goto("/catalog");
+  await page.getByLabel("Location").fill("Kyiv");
+  await page.getByRole("button", { name: "Search" }).click();
   await expect(page).toHaveURL(/location=Kyiv/);
-  await page.getByRole('button', { name: 'Load More' }).click();
-  await expect(page.getByRole('article')).toHaveCount(8);
+  await page.getByRole("button", { name: "Load More" }).click();
+  await expect(page.getByRole("article")).toHaveCount(8);
 });
 ```
 

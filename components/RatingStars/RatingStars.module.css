@@ -1,0 +1,12 @@
+.rating {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.star,
+.star img {
+  display: block;
+  width: 16px;
+  height: 16px;
+}

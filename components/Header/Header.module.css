@@ -1,0 +1,49 @@
+.header {
+  height: var(--header-height);
+  border-bottom: 1px solid var(--color-badges);
+  background: var(--color-surface);
+}
+
+.inner {
+  position: relative;
+  display: flex;
+  height: 100%;
+  align-items: center;
+}
+
+.logo {
+  display: block;
+  width: 136px;
+  height: 16px;
+}
+
+.logo img {
+  display: block;
+  width: 136px;
+  height: 16px;
+}
+
+.nav {
+  position: absolute;
+  left: 50%;
+  display: flex;
+  gap: 32px;
+  align-items: center;
+  transform: translateX(-50%);
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 24px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.nav a {
+  color: var(--color-text);
+  text-decoration: none;
+  transition: color 150ms ease;
+}
+
+.nav a:hover,
+.nav a[aria-current="page"] {
+  color: var(--color-accent);
+}

@@ -1,0 +1,23 @@
+:root {
+  --color-text: #101828;
+  --color-text-muted: #475467;
+  --color-gray: #6c717b;
+  --color-border: #dadde1;
+  --color-surface: #f7f7f7;
+  --color-badges: #f2f4f7;
+  --color-white: #ffffff;
+  --color-accent: #829b91;
+  --color-accent-hover: #6d7b75;
+  --color-rating: #ffc531;
+  --color-error: #e44848;
+  --color-error-light: #ffdfdf;
+  --font-sans: Inter, Arial, Helvetica, sans-serif;
+  --container-width: 1312px;
+  --page-gutter: 64px;
+  --header-height: 72px;
+  --radius-control: 12px;
+  --radius-image: 16px;
+  --radius-card: 16px;
+  --radius-panel: 20px;
+  --radius-pill: 200px;
+}
