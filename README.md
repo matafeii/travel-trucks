@@ -34,7 +34,7 @@ The application uses the [TravelTrucks API](https://campers-api.goit.study/docs)
 Requirements: Node.js 20.9 or newer and npm.
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/matafeii/travel-trucks.git
 cd travel-trucks
 npm install
 npx playwright install chromium
@@ -71,7 +71,12 @@ npm run start
 
 ## Deployment
 
-Import the repository into Vercel or Netlify, use `npm run build`, and keep the default API URL or provide the optional value documented in `.env.example`. Deployment URLs are added only after an authorized deployment.
+The production application is deployed on Vercel:
+
+- [Live application](https://travel-trucks-azure-eight.vercel.app)
+- [GitHub repository](https://github.com/matafeii/travel-trucks)
+
+The deployment uses `npm run build` and the default TravelTrucks API URL. The optional public API override remains documented in `.env.example`.
 
 ## Author
 
