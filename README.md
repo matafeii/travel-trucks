@@ -80,4 +80,4 @@ The deployment uses `npm run build` and the default TravelTrucks API URL. The op
 
 ## Author
 
-Kit_Kat
+[matafeii](https://github.com/matafeii)
