@@ -14,6 +14,7 @@ export class ApiError extends Error {
 export async function apiFetch<T>(
   path: string,
   options?: RequestInit,
+  expectedStatus?: number,
 ): Promise<T> {
   const response = await fetch(`${API_BASE_URL}${path}`, options);
 
@@ -37,6 +38,13 @@ export async function apiFetch<T>(
     }
 
     throw new ApiError(message, response.status);
+  }
+
+  if (expectedStatus !== undefined && response.status !== expectedStatus) {
+    throw new ApiError(
+      `Expected status ${expectedStatus} but received ${response.status}`,
+      response.status,
+    );
   }
 
   return response.json() as Promise<T>;

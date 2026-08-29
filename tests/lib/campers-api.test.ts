@@ -48,6 +48,30 @@ describe("campers API", () => {
     ).resolves.toEqual({ message: "Booking created" });
   });
 
+  it.each([200, 202, 204])(
+    "rejects booking responses with non-201 success status %s",
+    async (status) => {
+      server.use(
+        http.post(`${API_BASE_URL}/campers/:camperId/booking-requests`, () =>
+          status === 204
+            ? new HttpResponse(null, { status })
+            : HttpResponse.json({ message: "Not created" }, { status }),
+        ),
+      );
+
+      const error = await createBookingRequest("camper/one", {
+        name: "Ada Lovelace",
+        email: "ada@example.com",
+      }).catch((reason: unknown) => reason);
+
+      expect(error).toBeInstanceOf(ApiError);
+      expect(error).toMatchObject({
+        status,
+        message: `Expected status 201 but received ${status}`,
+      });
+    },
+  );
+
   it("uses the backend message for JSON booking failures", async () => {
     server.use(
       http.post(`${API_BASE_URL}/campers/:camperId/booking-requests`, () =>

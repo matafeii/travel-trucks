@@ -15,7 +15,8 @@ export default defineConfig({
       timeout: 30_000,
     },
     {
-      command: "npm run dev -- --hostname 127.0.0.1 --port 3100",
+      command:
+        "npm run build && npm run start -- --hostname 127.0.0.1 --port 3100",
       env: { NEXT_PUBLIC_API_BASE_URL: "http://127.0.0.1:3200" },
       url: "http://127.0.0.1:3100",
       reuseExistingServer: false,
