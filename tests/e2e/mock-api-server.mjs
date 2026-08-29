@@ -5,14 +5,14 @@ const port = 3200;
 const image = "/images/mavericks-large.png";
 const thumb = "/images/mavericks-thumb.png";
 
-function camper(id, name) {
+function camper(id, name, location = "Ukraine, Kyiv") {
   return {
     id,
     name,
     price: 8000,
     rating: 4.8,
     totalReviews: 1,
-    location: "Ukraine, Kyiv",
+    location,
     description: "A comfortable camper for memorable trips.",
     form: "panel_van",
     length: "5.99m",
@@ -29,9 +29,14 @@ function camper(id, name) {
 
 const campers = [
   camper("camper-1", "Alpine Roamer S1"),
-  ...Array.from({ length: 7 }, (_, index) =>
-    camper(`camper-${index + 2}`, `Travel Truck ${index + 2}`),
+  camper("camper-lviv-1", "Lviv Explorer 1", "Ukraine, Lviv"),
+  camper("camper-2", "Travel Truck 2"),
+  camper("camper-lviv-2", "Lviv Explorer 2", "Ukraine, Lviv"),
+  ...Array.from({ length: 6 }, (_, index) =>
+    camper(`camper-${index + 3}`, `Travel Truck ${index + 3}`),
   ),
+  camper("camper-lviv-3", "Lviv Explorer 3", "Ukraine, Lviv"),
+  camper("camper-lviv-4", "Lviv Explorer 4", "Ukraine, Lviv"),
 ];
 
 function send(response, status, data) {
@@ -87,13 +92,25 @@ const server = createServer((request, response) => {
 
   if (url.pathname === "/campers") {
     const page = Number(url.searchParams.get("page") ?? "1");
-    const start = (page - 1) * 4;
+    const perPage = Number(url.searchParams.get("perPage") ?? "4");
+    const location = url.searchParams.get("location")?.trim().toLowerCase();
+    const form = url.searchParams.get("form");
+    const engine = url.searchParams.get("engine");
+    const transmission = url.searchParams.get("transmission");
+    const filteredCampers = campers.filter(
+      (entry) =>
+        (!location || entry.location.toLowerCase().includes(location)) &&
+        (!form || entry.form === form) &&
+        (!engine || entry.engine === engine) &&
+        (!transmission || entry.transmission === transmission),
+    );
+    const start = (page - 1) * perPage;
     return send(response, 200, {
       page,
-      perPage: 4,
-      total: 8,
-      totalPages: 2,
-      campers: campers.slice(start, start + 4),
+      perPage,
+      total: filteredCampers.length,
+      totalPages: Math.ceil(filteredCampers.length / perPage),
+      campers: filteredCampers.slice(start, start + perPage),
     });
   }
 

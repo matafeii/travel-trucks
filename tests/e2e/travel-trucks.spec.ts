@@ -83,9 +83,12 @@ test("filters, paging, popup details, gallery and booking work", async ({
     path: testInfo.outputPath("catalog-1440.png"),
     fullPage: true,
   });
+  await expect(page.getByText("Ukraine, Lviv").first()).toBeVisible();
   await page.getByLabel("Location").fill("Kyiv");
   await page.getByRole("button", { name: "Search" }).click();
   await expect(page).toHaveURL(/location=Kyiv/);
+  await expect(page.getByRole("article")).toHaveCount(4);
+  await expect(page.getByText("Ukraine, Lviv")).toHaveCount(0);
   await page.getByRole("button", { name: "Load More" }).click();
   await expect(page.getByRole("article")).toHaveCount(8);
 
