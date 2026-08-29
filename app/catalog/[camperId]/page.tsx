@@ -4,7 +4,6 @@ import { Container } from "@/components/Container/Container";
 import { CamperOverview } from "@/features/camper-details/CamperOverview";
 import { getCamper, getCamperReviews } from "@/lib/api/campers";
 import { ApiError } from "@/lib/api/client";
-import type { CamperDetails } from "@/types/camper";
 import styles from "./page.module.css";
 
 interface CamperPageProps {
@@ -18,15 +17,6 @@ const missingCamperMetadata: Metadata = {
 
 function isApiNotFound(error: unknown): boolean {
   return error instanceof ApiError && error.status === 404;
-}
-
-async function getCamperOrNotFound(camperId: string): Promise<CamperDetails> {
-  try {
-    return await getCamper(camperId);
-  } catch (error) {
-    if (isApiNotFound(error)) notFound();
-    throw error;
-  }
 }
 
 export async function generateMetadata({
@@ -50,15 +40,25 @@ export async function generateMetadata({
 
 export default async function CamperPage({ params }: CamperPageProps) {
   const { camperId } = await params;
-  const [camper, reviews] = await Promise.all([
-    getCamperOrNotFound(camperId),
+  const [camperResult, reviewsResult] = await Promise.allSettled([
+    getCamper(camperId),
     getCamperReviews(camperId),
   ]);
+
+  if (camperResult.status === "rejected") {
+    if (isApiNotFound(camperResult.reason)) notFound();
+    throw camperResult.reason;
+  }
+
+  if (reviewsResult.status === "rejected") throw reviewsResult.reason;
 
   return (
     <main className={styles.main}>
       <Container>
-        <CamperOverview camper={camper} reviews={reviews} />
+        <CamperOverview
+          camper={camperResult.value}
+          reviews={reviewsResult.value}
+        />
       </Container>
     </main>
   );

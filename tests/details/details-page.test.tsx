@@ -89,6 +89,39 @@ it("maps only an API 404 to the not-found route", async () => {
   expect(notFoundMock).toHaveBeenCalledOnce();
 });
 
+it("prioritizes a missing camper over an earlier reviews failure", async () => {
+  let rejectCamper: (reason: ApiError) => void = () => undefined;
+  getCamperMock.mockImplementation(
+    () =>
+      new Promise((_resolve, reject) => {
+        rejectCamper = reject;
+      }),
+  );
+  getCamperReviewsMock.mockRejectedValue(
+    new ApiError("Reviews route missing", 404),
+  );
+
+  const page = CamperPage({
+    params: Promise.resolve({ camperId: "missing" }),
+  });
+  await vi.waitFor(() => expect(getCamperReviewsMock).toHaveBeenCalledOnce());
+  rejectCamper(new ApiError("Missing camper", 404));
+
+  await expect(page).rejects.toThrow("NEXT_NOT_FOUND");
+  expect(notFoundMock).toHaveBeenCalledOnce();
+});
+
+it("rethrows a reviews failure when the camper exists", async () => {
+  const reviewsError = new ApiError("Reviews unavailable", 503);
+  getCamperMock.mockResolvedValue(camperDetails);
+  getCamperReviewsMock.mockRejectedValue(reviewsError);
+
+  await expect(
+    CamperPage({ params: Promise.resolve({ camperId: "camper-1" }) }),
+  ).rejects.toBe(reviewsError);
+  expect(notFoundMock).not.toHaveBeenCalled();
+});
+
 it.each([
   ["another API status", new ApiError("Server error", 500)],
   ["a network failure", new TypeError("fetch failed")],
