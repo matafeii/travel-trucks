@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { http, HttpResponse } from "msw";
 import { CatalogClient } from "@/features/catalog/CatalogClient";
@@ -147,19 +147,42 @@ it("restarts page one for prior and explicitly resubmitted filters", async () =>
 });
 
 it("renders a distinct empty result state and hides Load More", async () => {
+  const user = userEvent.setup();
+  const requestedLocations: Array<string | null> = [];
   server.use(
-    http.get(`${API_BASE_URL}/campers`, () =>
-      HttpResponse.json(response(1, [], 1)),
-    ),
+    http.get(`${API_BASE_URL}/campers`, ({ request }) => {
+      const location = new URL(request.url).searchParams.get("location");
+      requestedLocations.push(location);
+      return HttpResponse.json(
+        location ? response(1, [], 1) : response(1, [makeCamper(1)], 1),
+      );
+    }),
   );
 
-  renderCatalog();
+  renderCatalog({ ...emptyFilters, location: "Nowhere" });
 
-  expect(await screen.findByText("No campers found.")).toBeInTheDocument();
+  const emptyHeading = await screen.findByRole("heading", {
+    name: "No campers found",
+  });
+  expect(emptyHeading).toBeInTheDocument();
+  expect(
+    screen.getByText(/changing or clearing your filters/i),
+  ).toBeInTheDocument();
   expect(screen.queryByRole("article")).not.toBeInTheDocument();
   expect(
     screen.queryByRole("button", { name: "Load More" }),
   ).not.toBeInTheDocument();
+
+  await user.click(
+    within(emptyHeading.parentElement?.parentElement as HTMLElement).getByRole(
+      "button",
+      { name: "Clear filters" },
+    ),
+  );
+
+  expect(await screen.findAllByRole("article")).toHaveLength(1);
+  expect(replaceMock).toHaveBeenCalledWith("/catalog");
+  expect(requestedLocations).toEqual(["Nowhere", null]);
 });
 
 it("retries an initial catalog error and renders the first page", async () => {

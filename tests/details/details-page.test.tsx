@@ -42,7 +42,7 @@ it("renders the camper overview from the requested id", async () => {
   expect(
     screen.getByRole("heading", { level: 1, name: "Travel Truck" }),
   ).toBeInTheDocument();
-  expect(screen.getByText("€8000.00")).toBeInTheDocument();
+  expect(screen.getByText("€8000")).toBeInTheDocument();
   expect(screen.getByText("Kyiv, Ukraine")).toBeInTheDocument();
   expect(screen.getByText("4.8 (1 Review)")).toBeInTheDocument();
   expect(screen.getByText("A compact camper for two.")).toBeInTheDocument();

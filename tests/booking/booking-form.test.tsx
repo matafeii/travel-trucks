@@ -31,6 +31,10 @@ it("keeps the exact 44px Figma panel padding", () => {
   );
 
   expect(css).toMatch(/\.panel\s*{[\s\S]*?padding:\s*44px;/);
+  expect(css).toMatch(/\.submit\s*{[\s\S]*?width:\s*100%;/);
+  expect(css).toMatch(
+    /input\[aria-invalid="true"\]\s*{[\s\S]*?background:\s*var\(--color-error-light\);/,
+  );
 });
 
 it("shows required errors and does not submit an empty form", async () => {

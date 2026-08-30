@@ -1,6 +1,8 @@
 import { render, screen, within } from "@testing-library/react";
 import { RatingStars } from "@/components/RatingStars/RatingStars";
 import { ReviewsList } from "@/features/camper-details/ReviewsList";
+import { CamperOverview } from "@/features/camper-details/CamperOverview";
+import { camperDetails } from "@/tests/fixtures/campers";
 import type { Review } from "@/types/camper";
 
 const reviews: Review[] = [
@@ -53,4 +55,21 @@ it("renders a neutral message when there are no reviews", () => {
 
   expect(screen.getByText("No reviews yet.")).toBeInTheDocument();
   expect(screen.queryByRole("list")).not.toBeInTheDocument();
+});
+
+it("places reviews beside the booking form in the lower details row", () => {
+  render(<CamperOverview camper={camperDetails} reviews={reviews} />);
+
+  const reviewsHeading = screen.getByRole("heading", { name: "Reviews" });
+  const bookingHeading = screen.getByRole("heading", {
+    name: "Book your campervan now",
+  });
+  const reviewsSection = reviewsHeading.closest("section");
+  const bookingSection = bookingHeading.closest("section");
+
+  expect(reviewsSection?.parentElement).toBe(bookingSection?.parentElement);
+  expect(reviewsSection?.parentElement).toHaveAttribute(
+    "data-layout",
+    "reviews-booking",
+  );
 });

@@ -16,6 +16,13 @@ interface CatalogClientProps {
   initialFilters: CatalogFilterValues;
 }
 
+const emptyFilters: CatalogFilterValues = {
+  location: "",
+  form: "",
+  engine: "",
+  transmission: "",
+};
+
 function normalizeFilters(filters: CatalogFilterValues): CatalogFilterValues {
   return readFilters(writeFilters(filters));
 }
@@ -82,7 +89,19 @@ export function CatalogClient({ initialFilters }: CatalogClientProps) {
           </div>
         ) : null}
         {query.isSuccess && campers.length === 0 ? (
-          <p className={styles.message}>No campers found.</p>
+          <div className={styles.emptyState}>
+            <div className={styles.emptyCopy}>
+              <h2>No campers found</h2>
+              <p>Try changing or clearing your filters to find a camper.</p>
+            </div>
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={() => applyFilters(emptyFilters)}
+            >
+              Clear filters
+            </Button>
+          </div>
         ) : null}
         {campers.length > 0 ? <CamperList campers={campers} /> : null}
 

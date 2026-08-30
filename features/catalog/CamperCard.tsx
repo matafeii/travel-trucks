@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { buttonClassNames } from "@/components/Button/Button";
+import { formatEuroPrice } from "@/lib/formatters";
 import type {
   Amenity,
   CamperForm,
@@ -82,7 +83,7 @@ export function CamperCard({ camper }: CamperCardProps) {
         <div className={styles.details}>
           <div className={styles.headingRow}>
             <h2 title={camper.name}>{camper.name}</h2>
-            <p className={styles.price}>€{camper.price.toFixed(2)}</p>
+            <p className={styles.price}>{formatEuroPrice(camper.price)}</p>
           </div>
 
           <div className={styles.meta}>

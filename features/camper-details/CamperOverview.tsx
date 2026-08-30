@@ -2,6 +2,7 @@ import Image from "next/image";
 import { BookingForm } from "@/features/booking/BookingForm";
 import { CamperGallery } from "@/features/camper-details/CamperGallery";
 import { ReviewsList } from "@/features/camper-details/ReviewsList";
+import { formatEuroPrice } from "@/lib/formatters";
 import type {
   Amenity,
   CamperDetails,
@@ -67,68 +68,72 @@ export function CamperOverview({ camper, reviews = [] }: CamperOverviewProps) {
 
   return (
     <section className={styles.overview} aria-labelledby="camper-name">
-      <CamperGallery camperName={camper.name} images={camper.gallery} />
+      <div className={styles.topContent}>
+        <CamperGallery camperName={camper.name} images={camper.gallery} />
 
-      <div className={styles.information}>
-        <div className={styles.summaryCard}>
-          <div className={styles.headingGroup}>
-            <h1 id="camper-name">{camper.name}</h1>
+        <div className={styles.information}>
+          <div className={styles.summaryCard}>
+            <div className={styles.headingGroup}>
+              <h1 id="camper-name">{camper.name}</h1>
 
-            <div className={styles.commercialDetails}>
-              <div className={styles.meta}>
-                <span className={styles.rating}>
-                  <Image
-                    aria-hidden
-                    src="/icons/star-filled.svg"
-                    alt=""
-                    width={16}
-                    height={16}
-                  />
-                  {camper.rating} ({camper.totalReviews} {reviewLabel})
-                </span>
-                <span>
-                  <Image
-                    aria-hidden
-                    src="/icons/map-details.svg"
-                    alt=""
-                    width={16}
-                    height={16}
-                  />
-                  {camper.location}
-                </span>
+              <div className={styles.commercialDetails}>
+                <div className={styles.meta}>
+                  <span className={styles.rating}>
+                    <Image
+                      aria-hidden
+                      src="/icons/star-filled.svg"
+                      alt=""
+                      width={16}
+                      height={16}
+                    />
+                    {camper.rating} ({camper.totalReviews} {reviewLabel})
+                  </span>
+                  <span>
+                    <Image
+                      aria-hidden
+                      src="/icons/map-details.svg"
+                      alt=""
+                      width={16}
+                      height={16}
+                    />
+                    {camper.location}
+                  </span>
+                </div>
+
+                <p className={styles.price}>{formatEuroPrice(camper.price)}</p>
               </div>
-
-              <p className={styles.price}>€{camper.price.toFixed(2)}</p>
             </div>
+
+            <p className={styles.description}>{camper.description}</p>
           </div>
 
-          <p className={styles.description}>{camper.description}</p>
-        </div>
+          <div className={styles.detailsCard}>
+            <div className={styles.featuresSection}>
+              <h2>Vehicle details</h2>
+              <ul aria-label="Camper features" className={styles.features}>
+                {featureValues(camper).map((feature, index) => (
+                  <li key={`${feature}-${index}`}>{featureLabels[feature]}</li>
+                ))}
+              </ul>
+            </div>
 
-        <div className={styles.detailsCard}>
-          <div className={styles.featuresSection}>
-            <h2>Vehicle details</h2>
-            <ul aria-label="Camper features" className={styles.features}>
-              {featureValues(camper).map((feature, index) => (
-                <li key={`${feature}-${index}`}>{featureLabels[feature]}</li>
+            <span className={styles.divider} aria-hidden>
+              <Image src="/icons/divider.svg" alt="" fill sizes="650px" />
+            </span>
+
+            <dl className={styles.specifications}>
+              {details.map(([label, value]) => (
+                <div key={label}>
+                  <dt>{label}</dt>
+                  <dd>{value}</dd>
+                </div>
               ))}
-            </ul>
+            </dl>
           </div>
-
-          <span className={styles.divider} aria-hidden>
-            <Image src="/icons/divider.svg" alt="" fill sizes="650px" />
-          </span>
-
-          <dl className={styles.specifications}>
-            {details.map(([label, value]) => (
-              <div key={label}>
-                <dt>{label}</dt>
-                <dd>{value}</dd>
-              </div>
-            ))}
-          </dl>
         </div>
+      </div>
 
+      <div className={styles.lowerContent} data-layout="reviews-booking">
         <ReviewsList reviews={reviews} />
         <BookingForm camperId={camper.id} />
       </div>

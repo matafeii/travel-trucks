@@ -80,6 +80,7 @@
 
 .field input[aria-invalid="true"] {
   border-color: var(--color-error);
+  background: var(--color-error-light);
 }
 
 .field input:disabled {
@@ -95,7 +96,7 @@
 }
 
 .submit {
-  min-width: 166px;
+  width: 100%;
   margin-top: 10px;
 }
 

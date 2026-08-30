@@ -79,6 +79,12 @@ test("filters, paging, popup details, gallery and booking work", async ({
     width: 888,
     height: 312,
   });
+  await expect(page.getByRole("article").first()).toHaveCSS(
+    "background-color",
+    "rgb(247, 247, 247)",
+  );
+  await expect(page.getByText("€8000").first()).toBeVisible();
+  await expect(page.getByText("€8000.00")).toHaveCount(0);
   await page.screenshot({
     path: testInfo.outputPath("catalog-1440.png"),
     fullPage: true,
@@ -156,4 +162,35 @@ test("filters, paging, popup details, gallery and booking work", async ({
   await expect(details.getByRole("status")).toContainText("Booking successful");
   expect(issues).toEqual({ warnings: [], errors: [], pageErrors: [] });
   expect(detailIssues).toEqual({ warnings: [], errors: [], pageErrors: [] });
+});
+
+test("empty catalog state clears filters and restores campers", async ({
+  page,
+}, testInfo) => {
+  const issues = watchConsole(page);
+  await page.goto("/catalog?location=Nowhere");
+
+  const emptyHeading = page.getByRole("heading", {
+    name: "No campers found",
+  });
+  await expect(emptyHeading).toBeVisible();
+  await expect(
+    page.getByText(/changing or clearing your filters/i),
+  ).toBeVisible();
+  await expect(page.getByRole("article")).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Load More" })).toHaveCount(0);
+  await page.screenshot({
+    path: testInfo.outputPath("empty-catalog-1440.png"),
+    fullPage: true,
+  });
+
+  await emptyHeading
+    .locator("..")
+    .locator("..")
+    .getByRole("button", { name: "Clear filters" })
+    .click();
+
+  await expect(page).toHaveURL(/\/catalog$/);
+  await expect(page.getByRole("article")).toHaveCount(4);
+  expect(issues).toEqual({ warnings: [], errors: [], pageErrors: [] });
 });
